@@ -1,3 +1,30 @@
+import http from 'http';
+
+function head(url){
+  return new Promise((resolve, reject) => {
+    const req = http.request(url, { method: 'HEAD' }, res => resolve(res));
+    req.on('error', reject); req.end();
+  });
+}
+
+const base = process.env.BASE_URL || 'http://localhost:3000';
+
+const resRoot = await head(base + '/');
+if (!String(resRoot.headers['content-security-policy']||'').includes("frame-ancestors 'none'")){
+  console.error('CSP missing'); process.exit(1);
+}
+
+const resSse = await head(base + '/api/tutor/stream?courseTitle=probe&scope=probe&message=hello');
+if (!String(resSse.headers['content-type']||'').includes('text/event-stream')){
+  console.error('SSE headers missing'); process.exit(1);
+}
+
+if (!String(resSse.headers['cache-control']||'').includes('no-cache')){
+  console.error('Cache-Control missing'); process.exit(1);
+}
+
+console.log('SMOKE OK');
+
 const base = process.env.SMOKE_URL || 'http://localhost:3000';
 const fetchJson = async (p) => (await fetch(base + p)).json();
 const fetchHead = async (p) => {

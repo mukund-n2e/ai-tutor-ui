@@ -1,0 +1,80 @@
+/* nudge2edge AI Tutor Design System CSS */
+:root {
+  /* Brand Colors */
+  --nudge2edge-primary: #587B0E;
+  --nudge2edge-primary-dark: #4a6b0c;
+  --nudge2edge-primary-light: #f0f9f7;
+  
+  /* Semantic Colors */
+  --color-success: #22c55e;
+  --color-success-bg: #f0fdf4;
+  --color-danger: #ef4444;
+  --color-danger-bg: #fef2f2;
+  --color-warn: #f59e0b;
+  --color-warn-bg: #fffbeb;
+  --color-info: #3b82f6;
+  --color-info-bg: #eff6ff;
+  --color-focus-ring: #587B0E;
+  
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 24px;
+  --spacing-2xl: 32px;
+  --spacing-3xl: 48px;
+  
+  /* Border Radius */
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  
+  /* Typography */
+  --font-family: 'Inter', system-ui, sans-serif;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 30px;
+  --font-size-4xl: 36px;
+}
+
+.btn-primary {
+  background-color: var(--nudge2edge-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg) var(--spacing-xl);
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--nudge2edge-primary-dark);
+}
+
+.btn-primary:focus {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* State classes using semantic colors */
+.text-success { color: var(--color-success); }
+.bg-success { background-color: var(--color-success-bg); }
+.text-danger { color: var(--color-danger); }
+.bg-danger { background-color: var(--color-danger-bg); }
+.text-warn { color: var(--color-warn); }
+.bg-warn { background-color: var(--color-warn-bg); }
+.text-info { color: var(--color-info); }
+.bg-info { background-color: var(--color-info-bg); }
+

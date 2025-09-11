@@ -1,0 +1,9 @@
+:root{
+  --colors-brand-primary-600: #587B0E;
+  --colors-neutral-900: #111827;
+  --colors-neutral-50: #F9FAFB;
+  --borderradius-lg: 12px;
+  --spacing-md: 16px;
+  --typography-fontfamilies-inter: Inter, system-ui, sans-serif;
+}
+

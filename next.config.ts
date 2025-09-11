@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const csp = [
   "default-src 'self'",
@@ -25,6 +26,8 @@ const streamHeaders: { key: string; value: string }[] = [
 ];
 
 const nextConfig: NextConfig = {
+  // Fix workspace root inference when app is nested under /web
+  outputFileTracingRoot: path.join(__dirname, ".."),
   async headers() {
     return [
       { source: '/(.*)', headers: securityHeaders },

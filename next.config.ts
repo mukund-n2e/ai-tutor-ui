@@ -6,7 +6,7 @@ const csp = [
   "base-uri 'self'",
   "img-src 'self' data:",
   "style-src 'self' 'unsafe-inline'",
-  "script-src 'self'",
+  "script-src 'self' 'unsafe-inline'",
   "connect-src 'self' https://*.amazonaws.com https://*.openai.com https://*.posthog.com wss://*.amazonaws.com",
   "frame-ancestors 'none'",
 ].join('; ');

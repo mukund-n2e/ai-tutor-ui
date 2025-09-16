@@ -1,14 +1,9 @@
-import TopNav from '../../components/TopNav'
-import dynamic from 'next/dynamic'
+'use client'
+import type { Metadata } from 'next';
+import ChatSSE from '../../components/ChatSSE';
 
-export const metadata = { title: 'AI Tutor' }
-const ChatSSE = dynamic(() => import('../../components/ChatSSE'), { ssr: false })
+export const metadata: Metadata = { title: 'AI Tutor' };
 
 export default function Page() {
-  return (
-    <main>
-      <TopNav />
-      <ChatSSE />
-    </main>
-  )
+  return <ChatSSE />;
 }

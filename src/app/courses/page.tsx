@@ -1,3 +1,6 @@
+export const dynamic = 'force-static';
+export const revalidate = 3600;
+
 import Link from 'next/link';
 import { listCourses } from '../../courses/registry';
 export const metadata = { title: 'Courses' };

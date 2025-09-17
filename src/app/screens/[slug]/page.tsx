@@ -1,4 +1,4 @@
-import type { Metadata, PageProps } from 'next';
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { screens } from '../../../design/screens.manifest';
@@ -7,13 +7,13 @@ export async function generateStaticParams() {
   return screens.map(s => ({ slug: s.slug }));
 }
 
-export async function generateMetadata({ params }: PageProps<{ slug: string }>): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const s = screens.find(x => x.slug === slug);
   return { title: s ? `Screen • ${s.title}` : 'Screen' };
 }
 
-export default async function ScreenPage({ params }: PageProps<{ slug: string }>) {
+export default async function ScreenPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const s = screens.find(x => x.slug === slug);
   if (!s) return notFound();

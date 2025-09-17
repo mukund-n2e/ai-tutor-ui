@@ -11,7 +11,8 @@ const links = [
 export default function TopNav() {
   const pathname = usePathname()
   return (
-    <nav style={{display:'flex',gap:'1rem',padding:'12px',borderBottom:'1px solid #eee'}}>
+    <nav className="topnav" style={{display:'flex',gap:'1rem',padding:'12px',borderBottom:'1px solid #eee'}}>
+  <Link href="/" className="brand"><img src="/brand/logo.svg" alt="Nudge2Edge" /><span>Nudge2Edge</span></Link>
       {links.map(l => (
         <Link
           key={l.href}

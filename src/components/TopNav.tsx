@@ -2,11 +2,8 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 const links = [
-  { href: '/', label: 'Home' },
+  { href: '/courses', label: 'Courses' },
   { href: '/tutor', label: 'Tutor' },
-  { href: '/sessions', label: 'Sessions' },
-  { href: '/settings', label: 'Settings' },
-  { href: '/ship', label: 'Ship' },
 ]
 export default function TopNav() {
   const pathname = usePathname()

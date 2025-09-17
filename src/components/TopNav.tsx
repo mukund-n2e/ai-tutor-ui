@@ -23,6 +23,9 @@ export default function TopNav() {
           {l.label}
         </Link>
       ))}
+      {process.env.NEXT_PUBLIC_SHOW_SCREENS === '1' && (
+        <Link href="/__screens">Screens</Link>
+      )}
     </nav>
   )
 }

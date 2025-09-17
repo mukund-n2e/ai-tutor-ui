@@ -1,8 +1,5 @@
 import type { Metadata } from 'next';
-import ChatSSE from '../../components/ChatSSE';
-
+import dynamic from 'next/dynamic';
 export const metadata: Metadata = { title: 'AI Tutor' };
-
-export default function Page() {
-  return <ChatSSE />;
-}
+const TutorShell = dynamic(() => import('../../components/TutorShell'), { ssr: true });
+export default function Page() { return <TutorShell />; }

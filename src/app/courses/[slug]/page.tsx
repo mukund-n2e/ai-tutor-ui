@@ -1,12 +1,14 @@
-import type { Metadata, PageProps } from 'next';
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getCourse, listCourses } from '../../../courses/registry';
 
 export async function generateStaticParams() {
-  return listCourses().map((c) => ({ slug: c.slug }));
+  return listCourses().map(c => ({ slug: c.slug }));
 }
 
-export async function generateMetadata({ params }: PageProps<{ slug: string }>): Promise<Metadata> {
+export async function generateMetadata(
+  { params }: { params: Promise<{ slug: string }> }
+): Promise<Metadata> {
   const { slug } = await params;
   const c = getCourse(slug);
   return { title: c ? `Course • ${c.title}` : 'Course' };
@@ -15,7 +17,9 @@ export async function generateMetadata({ params }: PageProps<{ slug: string }>):
 export const dynamic = 'force-static';
 export const revalidate = 3600;
 
-export default async function CoursePage({ params }: PageProps<{ slug: string }>) {
+export default async function CoursePage(
+  { params }: { params: Promise<{ slug: string }> }
+) {
   const { slug } = await params;
   const course = getCourse(slug);
   if (!course) notFound();

@@ -17,7 +17,7 @@ export default function ScreensIndex() {
             <h3 style={{margin: '12px 0 6px'}}>{s.title}</h3>
             <div style={{fontSize: 12, opacity: 0.85, marginBottom: 10}}>Slug: <code>{s.slug}</code></div>
             <div style={{display:'flex', gap:12, fontSize:14}}>
-              <Link href={`/__screens/${s.slug}`}>Open →</Link>
+              <Link href={`/screens/${s.slug}`}>Open →</Link>
               <span style={{opacity:0.7}}>|</span>
               <Link href={s.route}>{s.exists ? 'Go to page' : 'Suggested route'} →</Link>
             </div>

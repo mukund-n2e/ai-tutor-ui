@@ -1,8 +1,8 @@
 'use client';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 
-export default function SessionPage() {
+function SessionInner() {
   const sp = useSearchParams();
   const verb = sp.get('verb') ?? 'Create';
   const persona = sp.get('persona') ?? 'Creator';
@@ -54,8 +54,8 @@ export default function SessionPage() {
       // local save (simple library)
       const key = `session:${Date.now()}:${verb}:${persona}`;
       localStorage.setItem(key, JSON.stringify({ verb, persona, minutes, task, out, ts: Date.now() }));
-    } catch (e:any) {
-      setErr(e?.message || 'stream error');
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : "stream error");
     } finally { setBusy(false); }
   }
 
@@ -85,5 +85,15 @@ export default function SessionPage() {
         {out || <span style={{color:'#98a2b3'}}>Output will stream here…</span>}
       </div>
     </main>
+  );
+}
+
+export const dynamic = 'force-dynamic';
+
+export default function SessionPage() {
+  return (
+    <Suspense fallback={<main style={{padding:24,maxWidth:960,margin:'0 auto'}}><p>Loading…</p></main>}>
+      <SessionInner />
+    </Suspense>
   );
 }

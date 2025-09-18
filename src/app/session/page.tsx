@@ -70,7 +70,7 @@ function SessionInner() {
               if (idx === 1) setM2(prev => prev + chunk);
               if (idx === 2) setM3(prev => prev + chunk);
             }
-          } catch { /* ignore parse hiccups */ }
+          } catch {}
         }
       }
       const key = `session:${Date.now()}:${verb}:${persona}`;
@@ -79,7 +79,9 @@ function SessionInner() {
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
       setErr(msg || 'stream error'); setState('error');
-    } finally { setActive(null); }
+    } finally {
+      setActive(null);
+    }
   }
 
   async function validate() {
@@ -97,6 +99,25 @@ function SessionInner() {
       const msg = e instanceof Error ? e.message : String(e);
       setErr(msg || 'validate error');
     } finally { setVBusy(false); }
+  }
+
+  async function exportDocx() {
+    const content = [m1, m2, m3].filter(Boolean).join('\n\n');
+    const title = `${verb} — ${persona}`;
+    const resp = await fetch('/api/export/docx', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, content })
+    });
+    if (!resp.ok) {
+      const msg = await resp.text().catch(()=> '');
+      setErr(msg || 'export error'); return;
+    }
+    const blob = await resp.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `${verb.toLowerCase()}-${Date.now()}.docx`;
+    a.click();
   }
 
   return (
@@ -148,6 +169,8 @@ function SessionInner() {
             const blob = new Blob([`# ${verb} — ${persona}\n\n${[m1,m2,m3].filter(Boolean).join('\n\n')}\n`], { type: 'text/markdown' });
             const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${verb.toLowerCase()}-${Date.now()}.md`; a.click();
           }} disabled={!(m1||m2||m3)} style={{padding:'8px 12px',border:'1px solid #d0d5dd',borderRadius:8,background:'white'}}>Download .md</button>
+          <button onClick={exportDocx} disabled={!(m1||m2||m3)}
+            style={{padding:'8px 12px',border:'1px solid #d0d5dd',borderRadius:8,background:'white'}}>Export .docx</button>
 
           {vRes && (
             <span style={{

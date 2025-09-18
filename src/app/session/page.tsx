@@ -4,6 +4,8 @@ import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { MOVES, type SessionCtx } from '@/lib/moves';
 
 type RunState = 'idle'|'running'|'done'|'error';
+type Verdict = 'pass' | 'soft' | 'fix';
+type ValResult = { status: Verdict; score: number; suggestions: string[] };
 
 function SessionInner() {
   const sp = useSearchParams();
@@ -17,12 +19,14 @@ function SessionInner() {
   const [err, setErr] = useState<string | null>(null);
   const [active, setActive] = useState<0|1|2|null>(null);
 
+  const [vBusy, setVBusy] = useState(false);
+  const [vRes, setVRes] = useState<ValResult | null>(null);
+
   const ctx: SessionCtx = useMemo(()=>({ verb, persona, minutes, task, prev: { m1, m2 } }), [verb, persona, minutes, task, m1, m2]);
 
   const boxRef = useRef<HTMLDivElement>(null);
   useEffect(()=>{ boxRef.current?.scrollTo({top: 1e9, behavior: 'smooth'}); }, [m1, m2, m3]);
 
-  // Soft budget cap (client estimate)
   const charsPerToken = Number(process.env.NEXT_PUBLIC_CHARS_PER_TOKEN ?? process.env.CHARS_PER_TOKEN ?? '4') || 4;
   const tokensCap = Number(process.env.NEXT_PUBLIC_SESSION_TOKEN_CAP ?? process.env.SESSION_TOKEN_CAP ?? '12000') || 12000;
   const charCap = charsPerToken * tokensCap;
@@ -35,7 +39,7 @@ function SessionInner() {
     const message = move.build(ctx);
     const scope = [
       `Persona: ${persona}. Verb: ${verb}. Time box: ${minutes} minutes.`,
-      `Three-move loop: Understand -> Draft -> Polish.`
+      'Three-move loop: Understand -> Draft -> Polish.'
     ].join(' ');
     try {
       const resp = await fetch('/api/tutor/stream', {
@@ -54,8 +58,7 @@ function SessionInner() {
         buf += dec.decode(value, { stream: true });
         const frames = buf.split('\n\n'); buf = frames.pop() ?? '';
         for (const f of frames) {
-          if (!f.trim()) continue;
-          if (!f.startsWith('data:')) continue;
+          if (!f.trim() || !f.startsWith('data:')) continue;
           const payload = f.replace(/^data:\s*/, '');
           if (payload === '[DONE]') continue;
           try {
@@ -70,16 +73,30 @@ function SessionInner() {
           } catch { /* ignore parse hiccups */ }
         }
       }
-      // Save after each move
       const key = `session:${Date.now()}:${verb}:${persona}`;
       localStorage.setItem(key, JSON.stringify({ verb, persona, minutes, task, m1: idx===0?acc:m1, m2: idx===1?acc:m2, m3: idx===2?acc:m3, ts: Date.now() }));
       setState('done');
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
       setErr(msg || 'stream error'); setState('error');
-    } finally {
-      setActive(null);
-    }
+    } finally { setActive(null); }
+  }
+
+  async function validate() {
+    setVBusy(true); setErr(null); setVRes(null);
+    try {
+      const text = [m1, m2, m3].filter(Boolean).join('\n\n');
+      const resp = await fetch('/api/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, format: 'generic' })
+      });
+      const j = (await resp.json()) as ValResult;
+      setVRes(j);
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
+      setErr(msg || 'validate error');
+    } finally { setVBusy(false); }
   }
 
   return (
@@ -105,8 +122,14 @@ function SessionInner() {
               {active===i ? `Running… ${m.title}` : m.title}
             </button>
           ))}
+          <button onClick={validate} disabled={vBusy || !(m1||m2||m3)}
+            style={{padding:'10px 14px',borderRadius:8,border:'1px solid #d0d5dd',background: vBusy ? '#f2f4f7' : 'white'}}>
+            {vBusy ? 'Validating…' : 'Validate'}
+          </button>
         </div>
+
         {err && <p style={{color:'#b42318'}}>Error: {err}</p>}
+
         <div ref={boxRef} style={{border:'1px solid #e5e7eb',borderRadius:8,padding:16,height:460,overflow:'auto',whiteSpace:'pre-wrap'}}>
           <h3 style={{marginTop:0}}>Move 1 — Understand</h3>
           <div>{m1 || <span style={{color:'#98a2b3'}}>—</span>}</div>
@@ -117,14 +140,34 @@ function SessionInner() {
           <h3>Move 3 — Polish</h3>
           <div>{m3 || <span style={{color:'#98a2b3'}}>—</span>}</div>
         </div>
-        <div style={{marginTop:12,display:'flex',gap:8}}>
+
+        <div style={{display:'flex',gap:8,marginTop:12,alignItems:'center',flexWrap:'wrap'}}>
           <button onClick={()=>navigator.clipboard.writeText([m1,m2,m3].filter(Boolean).join('\n\n'))}
             disabled={!(m1||m2||m3)} style={{padding:'8px 12px',border:'1px solid #d0d5dd',borderRadius:8,background:'white'}}>Copy</button>
           <button onClick={()=>{
             const blob = new Blob([`# ${verb} — ${persona}\n\n${[m1,m2,m3].filter(Boolean).join('\n\n')}\n`], { type: 'text/markdown' });
             const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${verb.toLowerCase()}-${Date.now()}.md`; a.click();
           }} disabled={!(m1||m2||m3)} style={{padding:'8px 12px',border:'1px solid #d0d5dd',borderRadius:8,background:'white'}}>Download .md</button>
+
+          {vRes && (
+            <span style={{
+              padding:'6px 10px', borderRadius:999, border:'1px solid #d0d5dd',
+              background: vRes.status==='pass' ? '#ecfdf3' : vRes.status==='soft' ? '#fff7ed' : '#fef3f2',
+              color: vRes.status==='pass' ? '#027a48' : vRes.status==='soft' ? '#9a3412' : '#b42318'
+            }}>
+              Validation: {vRes.status.toUpperCase()} (score {vRes.score})
+            </span>
+          )}
         </div>
+
+        {vRes?.suggestions?.length ? (
+          <div style={{marginTop:8,border:'1px dashed #e5e7eb',borderRadius:8,padding:12}}>
+            <strong>Suggestions</strong>
+            <ul style={{margin:'8px 0 0 16px'}}>
+              {vRes.suggestions.map((s, i) => <li key={i}>{s}</li>)}
+            </ul>
+          </div>
+        ) : null}
       </div>
     </main>
   );

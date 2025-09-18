@@ -1,69 +1,86 @@
 import type { NextRequest } from 'next/server';
-import * as base from './route.base';
 
-// --- Config (env-driven) ---
-const TOKENS = Math.max(200, parseInt(process.env.SESSION_TOKEN_CAP ?? '1200', 10));
-const CHARS_PER_TOKEN = Math.max(1, parseInt(process.env.CHARS_PER_TOKEN ?? '4', 10));
-const CHAR_LIMIT = TOKENS * CHARS_PER_TOKEN;
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+export const maxDuration = 60;
 
-// Make a TransformStream that counts approximate payload characters and ends the stream when cap is reached.
-// It also emits a final SSE "cap" event so the client can show a friendly notice.
-function makeCapTransform(limitChars: number) {
+function sseError(msg: string) {
   const enc = new TextEncoder();
-  const dec = new TextDecoder();
-  let sent = 0;
-  let announced = false;
-
-  return new TransformStream<Uint8Array, Uint8Array>({
-    transform(chunk, controller) {
-      // Count payload-ish chars (ignore event/id/retry lines to avoid over-counting control frames)
-      const text = dec.decode(chunk);
-      const payloadish = text
-        .replace(/^event:.*$/gm, '')
-        .replace(/^id:.*$/gm, '')
-        .replace(/^retry:.*$/gm, '');
-      sent += payloadish.length;
-
-      // Pass through what we have
-      controller.enqueue(chunk);
-
-      if (!announced && sent >= limitChars) {
-        announced = true;
-        const footer =
-          `\n\nevent: cap\ndata: {"reason":"session_cap","capTokens":${TOKENS},"capChars":${limitChars}}\n\n`;
-        controller.enqueue(enc.encode(footer));
-        controller.terminate();
-      }
+  return new Response(new ReadableStream({
+    start(ctrl) {
+      ctrl.enqueue(enc.encode(`event: error\n`));
+      ctrl.enqueue(enc.encode(`data: ${JSON.stringify({ error: msg })}\n\n`));
+      ctrl.close();
+    }
+  }), {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache, no-transform',
+      'Connection': 'keep-alive',
     }
   });
 }
 
-async function wrapResponse(resp: Response): Promise<Response> {
-  // Only wrap SSE responses with a body
-  const ct = resp.headers.get('content-type') || '';
-  if (!resp.body || !ct.includes('text/event-stream')) return resp;
-  const capped = resp.body.pipeThrough(makeCapTransform(CHAR_LIMIT));
-  // Preserve headers & status
-  const headers = new Headers(resp.headers);
-  return new Response(capped, { status: resp.status, statusText: resp.statusText, headers });
+async function handler(req: NextRequest) {
+  const url = new URL(req.url);
+  let message = url.searchParams.get('message') || '';
+  let courseTitle = url.searchParams.get('courseTitle') || '';
+  let scope = url.searchParams.get('scope') || '';
+
+  if (req.method === 'POST') {
+    try {
+      const j = await req.json();
+      message = j?.message ?? message;
+      courseTitle = j?.courseTitle ?? courseTitle;
+      scope = j?.scope ?? scope;
+    } catch {}
+  }
+
+  const key = process.env.OPENAI_API_KEY || '';
+  if (!key) return sseError('missing OPENAI_API_KEY');
+
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${key}`,
+  };
+  if (process.env.OPENAI_ORG_ID) headers['OpenAI-Organization'] = String(process.env.OPENAI_ORG_ID);
+  if (process.env.OPENAI_PROJECT) headers['OpenAI-Project'] = String(process.env.OPENAI_PROJECT);
+
+  const sys = `You are the course tutor for ${courseTitle}.
+Stay strictly within this scope: ${scope}.
+If asked outside scope, say what's out of scope and suggest the next micro-course.`;
+
+  const upstream = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      model: 'gpt-4o-mini',
+      stream: true,
+      temperature: 0.3,
+      messages: [
+        { role: 'system', content: sys },
+        { role: 'user', content: message }
+      ]
+    })
+  });
+
+  // Try to capture any error body for visibility
+  let errSnippet = '';
+  try { if (!upstream.ok) errSnippet = (await upstream.clone().text()).slice(0, 500); } catch {}
+
+  if (!upstream.ok || !upstream.body) {
+    return sseError(`status=${upstream.status} ${errSnippet}`);
+  }
+
+  // Pass-through the provider's SSE stream as-is
+  return new Response(upstream.body, {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache, no-transform',
+      'Connection': 'keep-alive',
+    }
+  });
 }
 
-type Handler = (req: NextRequest) => Promise<Response> | Response;
-type BaseHandlers = {
-  GET?: Handler;
-  POST?: Handler;
-};
-
-export async function GET(req: NextRequest) {
-  const h: Handler | undefined = (base as BaseHandlers).GET;
-  if (!h) return new Response('Not Found', { status: 404 });
-  const res = await h(req);
-  return wrapResponse(res);
-}
-
-export async function POST(req: NextRequest) {
-  const h: Handler | undefined = (base as BaseHandlers).POST;
-  if (!h) return new Response('Method Not Allowed', { status: 405 });
-  const res = await h(req);
-  return wrapResponse(res);
-}
+export async function GET(req: NextRequest)  { return handler(req); }
+export async function POST(req: NextRequest) { return handler(req); }

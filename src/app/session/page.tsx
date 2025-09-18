@@ -1,6 +1,9 @@
 'use client';
 import { useSearchParams } from 'next/navigation';
-import { Suspense, useEffect, useRef, useState } from 'react';
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { MOVES, type SessionCtx } from '@/lib/moves';
+
+type RunState = 'idle'|'running'|'done'|'error';
 
 function SessionInner() {
   const sp = useSearchParams();
@@ -9,30 +12,42 @@ function SessionInner() {
   const minutes = sp.get('minutes') ?? '20';
   const task = sp.get('task') ?? '';
 
-  const [out, setOut] = useState('');
-  const [busy, setBusy] = useState(false);
-  const [err, setErr] = useState<string|null>(null);
+  const [m1, setM1] = useState(''); const [m2, setM2] = useState(''); const [m3, setM3] = useState('');
+  const [state, setState] = useState<RunState>('idle');
+  const [err, setErr] = useState<string | null>(null);
+  const [active, setActive] = useState<0|1|2|null>(null);
+
+  const ctx: SessionCtx = useMemo(()=>({ verb, persona, minutes, task, prev: { m1, m2 } }), [verb, persona, minutes, task, m1, m2]);
+
   const boxRef = useRef<HTMLDivElement>(null);
-  useEffect(()=>{ boxRef.current?.scrollTo({top:1e9,behavior:'smooth'}); }, [out]);
+  useEffect(()=>{ boxRef.current?.scrollTo({top: 1e9, behavior: 'smooth'}); }, [m1, m2, m3]);
 
-  const scope = [
-    `Persona: ${persona}. Verb: ${verb}. Time box: ${minutes} minutes.`,
-    `Run a 3‑move tutoring loop: 1) Understand, 2) Draft, 3) Polish.`,
-    `Stay focused on the user's task and produce concise, actionable output.`,
-  ].join(' ');
+  // Soft budget cap (client estimate)
+  const charsPerToken = Number(process.env.NEXT_PUBLIC_CHARS_PER_TOKEN ?? process.env.CHARS_PER_TOKEN ?? '4') || 4;
+  const tokensCap = Number(process.env.NEXT_PUBLIC_SESSION_TOKEN_CAP ?? process.env.SESSION_TOKEN_CAP ?? '12000') || 12000;
+  const charCap = charsPerToken * tokensCap;
+  const charCount = (m1 + m2 + m3).length;
+  const overCap = charCount >= charCap;
 
-  async function run() {
-    setBusy(true); setErr(null); setOut('');
+  async function runMove(idx: 0|1|2) {
+    setActive(idx); setState('running'); setErr(null);
+    const move = MOVES[idx];
+    const message = move.build(ctx);
+    const scope = [
+      `Persona: ${persona}. Verb: ${verb}. Time box: ${minutes} minutes.`,
+      `Three-move loop: Understand -> Draft -> Polish.`
+    ].join(' ');
     try {
       const resp = await fetch('/api/tutor/stream', {
         method: 'POST',
         headers: { 'Accept': 'text/event-stream', 'Content-Type': 'application/json' },
-        body: JSON.stringify({ courseTitle: `${verb} – ${persona}`, scope, message: task })
+        body: JSON.stringify({ courseTitle: `${verb} — ${persona}`, scope, message })
       });
       if (!resp.ok || !resp.body) throw new Error(`upstream ${resp.status}`);
       const reader = resp.body.getReader();
       const dec = new TextDecoder();
       let buf = '';
+      let acc = '';
       for (;;) {
         const { value, done } = await reader.read();
         if (done) break;
@@ -40,49 +55,76 @@ function SessionInner() {
         const frames = buf.split('\n\n'); buf = frames.pop() ?? '';
         for (const f of frames) {
           if (!f.trim()) continue;
-          if (f.startsWith('data:')) {
-            const payload = f.replace(/^data:\s*/, '');
-            if (payload === '[DONE]') continue;
-            try {
-              const j = JSON.parse(payload);
-              const chunk = j?.choices?.[0]?.delta?.content ?? '';
-              if (chunk) setOut(prev => prev + chunk);
-            } catch {}
-          }
+          if (!f.startsWith('data:')) continue;
+          const payload = f.replace(/^data:\s*/, '');
+          if (payload === '[DONE]') continue;
+          try {
+            const j = JSON.parse(payload);
+            const chunk: string = j?.choices?.[0]?.delta?.content ?? '';
+            if (chunk) {
+              acc += chunk;
+              if (idx === 0) setM1(prev => prev + chunk);
+              if (idx === 1) setM2(prev => prev + chunk);
+              if (idx === 2) setM3(prev => prev + chunk);
+            }
+          } catch { /* ignore parse hiccups */ }
         }
       }
-      // local save (simple library)
+      // Save after each move
       const key = `session:${Date.now()}:${verb}:${persona}`;
-      localStorage.setItem(key, JSON.stringify({ verb, persona, minutes, task, out, ts: Date.now() }));
+      localStorage.setItem(key, JSON.stringify({ verb, persona, minutes, task, m1: idx===0?acc:m1, m2: idx===1?acc:m2, m3: idx===2?acc:m3, ts: Date.now() }));
+      setState('done');
     } catch (e: unknown) {
-      setErr(e instanceof Error ? e.message : "stream error");
-    } finally { setBusy(false); }
+      const msg = e instanceof Error ? e.message : String(e);
+      setErr(msg || 'stream error'); setState('error');
+    } finally {
+      setActive(null);
+    }
   }
 
   return (
-    <main style={{padding:24,maxWidth:960,margin:'0 auto'}}>
+    <main style={{padding:24,maxWidth:980,margin:'0 auto'}}>
       <h1 style={{marginBottom:4}}>{verb} — {persona}</h1>
-      <p style={{color:'#667085',marginBottom:12}}>{task}</p>
-      <div style={{display:'flex',gap:8,marginBottom:12}}>
-        <button onClick={run} disabled={busy}
-          style={{padding:'10px 14px',borderRadius:8,border:'1px solid #d0d5dd',background:busy?'#f2f4f7':'white'}}>
-          {busy ? 'Streaming…' : 'Run'}
-        </button>
-        <button onClick={()=>navigator.clipboard.writeText(out)} disabled={!out}
-          style={{padding:'10px 14px',borderRadius:8,border:'1px solid #d0d5dd',background:'white'}}>
-          Copy
-        </button>
-        <button onClick={()=>{
-          const blob = new Blob([`# ${verb} — ${persona}\n\n${out}\n`], { type: 'text/markdown' });
-          const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${verb.toLowerCase()}-${Date.now()}.md`; a.click();
-        }} disabled={!out}
-          style={{padding:'10px 14px',borderRadius:8,border:'1px solid #d0d5dd',background:'white'}}>
-          Download .md
-        </button>
-      </div>
-      {err && <p style={{color:'#b42318',marginBottom:12}}>Error: {err}</p>}
-      <div ref={boxRef} style={{border:'1px solid #e5e7eb',borderRadius:8,padding:16,height:460,overflow:'auto',whiteSpace:'pre-wrap'}}>
-        {out || <span style={{color:'#98a2b3'}}>Output will stream here…</span>}
+      <p style={{color:'#667085',marginBottom:16}}>Time box: {minutes} min</p>
+      <section style={{marginBottom:16}}>
+        <label style={{display:'block',fontWeight:600,marginBottom:8}}>Task</label>
+        <p style={{margin:0,whiteSpace:'pre-wrap'}}>{task}</p>
+      </section>
+
+      {overCap && (
+        <div style={{marginBottom:12,padding:12,border:'1px solid #fee4e2',background:'#fff4f3',borderRadius:8,color:'#b42318'}}>
+          You’re at the session budget. Results may truncate. Consider copying/downloading now.
+        </div>
+      )}
+
+      <div style={{display:'grid',gap:12,marginBottom:16}}>
+        <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+          {MOVES.map((m, i) => (
+            <button key={m.key} onClick={()=>runMove(i as 0|1|2)} disabled={active!==null}
+              style={{padding:'10px 14px',borderRadius:8,border:'1px solid #d0d5dd',background: active===i ? '#f2f4f7' : 'white'}}>
+              {active===i ? `Running… ${m.title}` : m.title}
+            </button>
+          ))}
+        </div>
+        {err && <p style={{color:'#b42318'}}>Error: {err}</p>}
+        <div ref={boxRef} style={{border:'1px solid #e5e7eb',borderRadius:8,padding:16,height:460,overflow:'auto',whiteSpace:'pre-wrap'}}>
+          <h3 style={{marginTop:0}}>Move 1 — Understand</h3>
+          <div>{m1 || <span style={{color:'#98a2b3'}}>—</span>}</div>
+          <hr/>
+          <h3>Move 2 — Draft</h3>
+          <div>{m2 || <span style={{color:'#98a2b3'}}>—</span>}</div>
+          <hr/>
+          <h3>Move 3 — Polish</h3>
+          <div>{m3 || <span style={{color:'#98a2b3'}}>—</span>}</div>
+        </div>
+        <div style={{marginTop:12,display:'flex',gap:8}}>
+          <button onClick={()=>navigator.clipboard.writeText([m1,m2,m3].filter(Boolean).join('\n\n'))}
+            disabled={!(m1||m2||m3)} style={{padding:'8px 12px',border:'1px solid #d0d5dd',borderRadius:8,background:'white'}}>Copy</button>
+          <button onClick={()=>{
+            const blob = new Blob([`# ${verb} — ${persona}\n\n${[m1,m2,m3].filter(Boolean).join('\n\n')}\n`], { type: 'text/markdown' });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${verb.toLowerCase()}-${Date.now()}.md`; a.click();
+          }} disabled={!(m1||m2||m3)} style={{padding:'8px 12px',border:'1px solid #d0d5dd',borderRadius:8,background:'white'}}>Download .md</button>
+        </div>
       </div>
     </main>
   );

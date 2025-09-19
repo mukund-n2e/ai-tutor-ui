@@ -1,3 +1,4 @@
+export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
@@ -11,3 +12,5 @@ export async function GET() {
     { headers: { 'Cache-Control': 'no-store' } }
   );
 }
+
+// bump: 2025-09-19T11:33:44.511Z

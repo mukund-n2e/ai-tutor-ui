@@ -31,6 +31,8 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <TopNav />
         {children}
+        {/* SSR beta marker for monitors */}
+        <div data-ssr-beta="true" style={{ display: 'none' }}>BETA</div>
       </body>
     </html>
   );

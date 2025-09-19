@@ -20,7 +20,8 @@ export async function POST(req: NextRequest) {
     const buf = await Packer.toBuffer(doc);
 
     const safe = String(title).replace(/[^a-z0-9-_]+/gi, '_') || 'session';
-    return new Response(buf, {
+    const u8 = new Uint8Array(buf);
+    return new Response(u8, {
       status: 200,
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',

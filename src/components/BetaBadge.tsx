@@ -1,4 +1,4 @@
-'use client';
+
 export default function BetaBadge() {
   return (
     <div data-ssr-beta="true" style={{

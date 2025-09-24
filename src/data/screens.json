@@ -1,104 +1,226 @@
 [
   {
-    "slug": "01-landing",
-    "title": "01-landing",
-    "file": "01-landing.png",
-    "order": 999
-  },
-  {
     "slug": "01-landing-v2",
     "title": "01_Landing-V2",
     "file": "01_Landing-V2.png",
-    "order": 999
+    "order": 1,
+    "route": "/wip/01-landing-v2",
+    "exists": false
   },
   {
-    "slug": "02-intake",
-    "title": "02-intake",
-    "file": "02-intake.png",
-    "order": 999
+    "slug": "01-landing",
+    "title": "01-landing",
+    "file": "01-landing.png",
+    "order": 2,
+    "route": "/wip/01-landing",
+    "exists": false
   },
   {
     "slug": "02-onboarding-role-v2",
     "title": "02_Onboarding_Role-V2",
     "file": "02_Onboarding_Role-V2.png",
-    "order": 999
+    "order": 3,
+    "route": "/wip/02-onboarding-role-v2",
+    "exists": false
   },
   {
-    "slug": "03-samples",
-    "title": "03-samples",
-    "file": "03-samples.png",
-    "order": 999
+    "slug": "02-intake",
+    "title": "02-intake",
+    "file": "02-intake.png",
+    "order": 4,
+    "route": "/wip/02-intake",
+    "exists": false
   },
   {
     "slug": "03-onboarding-readiness-v2",
     "title": "03_Onboarding_Readiness-V2",
     "file": "03_Onboarding_Readiness-V2.png",
-    "order": 999
+    "order": 5,
+    "route": "/wip/03-onboarding-readiness-v2",
+    "exists": false
   },
   {
-    "slug": "04-session",
-    "title": "04-session",
-    "file": "04-session.png",
-    "order": 999
+    "slug": "03-samples",
+    "title": "03-samples",
+    "file": "03-samples.png",
+    "order": 6,
+    "route": "/wip/03-samples",
+    "exists": false
   },
   {
     "slug": "04-quickwin-proposal-v2",
     "title": "04_QuickWin_Proposal-V2",
     "file": "04_QuickWin_Proposal-V2.png",
-    "order": 999
+    "order": 7,
+    "route": "/wip/04-quickwin-proposal-v2",
+    "exists": false
   },
   {
-    "slug": "05-validator",
-    "title": "05-validator",
-    "file": "05-validator.png",
-    "order": 999
+    "slug": "04-session",
+    "title": "04-session",
+    "file": "04-session.png",
+    "order": 8,
+    "route": "/wip/04-session",
+    "exists": false
   },
   {
     "slug": "05-session-v2",
     "title": "05_Session-V2",
     "file": "05_Session-V2.png",
-    "order": 999
+    "order": 9,
+    "route": "/wip/05-session-v2",
+    "exists": false
   },
   {
-    "slug": "06-ship",
-    "title": "06-ship",
-    "file": "06-ship.png",
-    "order": 999
+    "slug": "05-validator",
+    "title": "05-validator",
+    "file": "05-validator.png",
+    "order": 10,
+    "route": "/wip/05-validator",
+    "exists": false
   },
   {
     "slug": "06-validator-v2",
     "title": "06_Validator-V2",
     "file": "06_Validator-V2.png",
-    "order": 999
+    "order": 11,
+    "route": "/wip/06-validator-v2",
+    "exists": false
   },
   {
-    "slug": "07-errors-caps",
-    "title": "07-errors-caps",
-    "file": "07-errors-caps.png",
-    "order": 999
+    "slug": "06-ship",
+    "title": "06-ship",
+    "file": "06-ship.png",
+    "order": 12,
+    "route": "/wip/06-ship",
+    "exists": false
   },
   {
     "slug": "07-ship-export-v2",
     "title": "07_Ship_Export-V2",
     "file": "07_Ship_Export-V2.png",
-    "order": 999
+    "order": 13,
+    "route": "/wip/07-ship-export-v2",
+    "exists": false
   },
   {
-    "slug": "08-account",
-    "title": "08-account",
-    "file": "08-account.png",
-    "order": 999
+    "slug": "07-errors-caps",
+    "title": "07-errors-caps",
+    "file": "07-errors-caps.png",
+    "order": 14,
+    "route": "/wip/07-errors-caps",
+    "exists": false
   },
   {
     "slug": "08-motivation-v2",
     "title": "08_Motivation-V2",
     "file": "08_Motivation-V2.png",
-    "order": 999
+    "order": 15,
+    "route": "/wip/08-motivation-v2",
+    "exists": false
+  },
+  {
+    "slug": "08-account",
+    "title": "08-account",
+    "file": "08-account.png",
+    "order": 16,
+    "route": "/wip/08-account",
+    "exists": false
+  },
+  {
+    "slug": "09-coursewall-personalised-v2",
+    "title": "09_CourseWall_Personalised-V2",
+    "file": "09_CourseWall_Personalised-V2.png",
+    "order": 17,
+    "route": "/wip/09-coursewall-personalised-v2",
+    "exists": false
   },
   {
     "slug": "09-library",
     "title": "09-library",
     "file": "09-library.png",
-    "order": 999
+    "order": 18,
+    "route": "/wip/09-library",
+    "exists": false
+  },
+  {
+    "slug": "10-admin",
+    "title": "10-admin",
+    "file": "10-admin.png",
+    "order": 19,
+    "route": "/wip/10-admin",
+    "exists": false
+  },
+  {
+    "slug": "11-tools-prompt-v2",
+    "title": "11_Tools_Prompt-V2",
+    "file": "11_Tools_Prompt-V2.png",
+    "order": 20,
+    "route": "/wip/11-tools-prompt-v2",
+    "exists": false
+  },
+  {
+    "slug": "11-components",
+    "title": "11-components",
+    "file": "11-components.png",
+    "order": 21,
+    "route": "/wip/11-components",
+    "exists": false
+  },
+  {
+    "slug": "12-error-states-v2",
+    "title": "12_Error_States-V2",
+    "file": "12_Error_States-V2.png",
+    "order": 22,
+    "route": "/wip/12-error-states-v2",
+    "exists": false
+  },
+  {
+    "slug": "13-account-v2",
+    "title": "13_Account-V2",
+    "file": "13_Account-V2.png",
+    "order": 23,
+    "route": "/wip/13-account-v2",
+    "exists": false
+  },
+  {
+    "slug": "14-library-v2",
+    "title": "14_Library-V2",
+    "file": "14_Library-V2.png",
+    "order": 24,
+    "route": "/wip/14-library-v2",
+    "exists": false
+  },
+  {
+    "slug": "admin-v2",
+    "title": "Admin-V2",
+    "file": "Admin-V2.png",
+    "order": 25,
+    "route": "/wip/admin-v2",
+    "exists": false
+  },
+  {
+    "slug": "components-v2",
+    "title": "Components-V2",
+    "file": "Components-V2.png",
+    "order": 26,
+    "route": "/wip/components-v2",
+    "exists": false
+  },
+  {
+    "slug": "legacy-intake-v2",
+    "title": "Legacy_Intake-V2",
+    "file": "Legacy_Intake-V2.png",
+    "order": 27,
+    "route": "/wip/legacy-intake-v2",
+    "exists": false
+  },
+  {
+    "slug": "samples-v2",
+    "title": "Samples-V2",
+    "file": "Samples-V2.png",
+    "order": 28,
+    "route": "/wip/samples-v2",
+    "exists": false
   }
 ]

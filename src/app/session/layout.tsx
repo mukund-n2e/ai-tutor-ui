@@ -1,4 +1,4 @@
-import BetaBadge from '@/src/components/BetaBadge';
+import BetaBadge from '@/components/BetaBadge';
 
 export default function SessionLayout({ children }: { children: React.ReactNode }) {
   return (

@@ -2,12 +2,23 @@
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { MOVES, type SessionCtx } from '@/lib/moves';
+import { useRouter } from 'next/navigation';
+import { useSessionStore } from '@/store/sessionStore';
 
 type RunState = 'idle'|'running'|'done'|'error';
 type Verdict = 'pass' | 'soft' | 'fix';
 type ValResult = { status: Verdict; score: number; suggestions: string[] };
 
 function SessionInner() {
+  const router = useRouter();
+  const session = useSessionStore(s => s.session);
+  // Auto-route to /validator after 3 moves or token cap reached
+  useEffect(() => {
+    if (!session) return;
+    const allDone = session.completedMoveIds.size >= 3;
+    const capped = session.tokensUsed >= session.tokenCap;
+    if (allDone || capped) router.push('/validator');
+  }, [router, session?.completedMoveIds.size, session?.tokensUsed, session?.tokenCap]);
   const sp = useSearchParams();
   const verb = sp?.get('verb') ?? 'Create';
   const persona = sp?.get('persona') ?? 'Creator';
@@ -21,6 +32,7 @@ function SessionInner() {
 
   const [vBusy, setVBusy] = useState(false);
   const [vRes, setVRes] = useState<ValResult | null>(null);
+  const completeMove = useSessionStore(s => s.completeMove);
 
   const ctx: SessionCtx = useMemo(()=>({ verb, persona, minutes, task, prev: { m1, m2 } }), [verb, persona, minutes, task, m1, m2]);
 
@@ -76,6 +88,8 @@ function SessionInner() {
       const key = `session:${Date.now()}:${verb}:${persona}`;
       localStorage.setItem(key, JSON.stringify({ verb, persona, minutes, task, m1: idx===0?acc:m1, m2: idx===1?acc:m2, m3: idx===2?acc:m3, ts: Date.now() }));
       setState('done');
+      // mark move completed for auto-route gate
+      try { completeMove(MOVES[idx].key); } catch {}
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
       setErr(msg || 'stream error'); setState('error');

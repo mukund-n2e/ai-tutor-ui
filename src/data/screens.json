@@ -10,11 +10,11 @@
   { "slug": "09-library", "title": "09 library", "file": "09-library.png", "order": 9 },
   { "slug": "10-admin", "title": "10 admin", "file": "10-admin.png", "order": 10 },
   { "slug": "11-components", "title": "11 components", "file": "11-components.png", "order": 11 },
-  { "slug": "12-todo", "title": "12 todo", "todo": true, "order": 12 },
-  { "slug": "13-todo", "title": "13 todo", "todo": true, "order": 13 },
-  { "slug": "14-todo", "title": "14 todo", "todo": true, "order": 14 },
-  { "slug": "15-todo", "title": "15 todo", "todo": true, "order": 15 },
-  { "slug": "16-todo", "title": "16 todo", "todo": true, "order": 16 },
-  { "slug": "17-todo", "title": "17 todo", "todo": true, "order": 17 }
+  { "slug": "12-error-states-v2", "title": "12 Error States V2", "file": "12_Error_States-V2.png", "order": 12 },
+  { "slug": "13-account-v2", "title": "13 Account V2", "file": "13_Account-V2.png", "order": 13 },
+  { "slug": "14-library-v2", "title": "14 Library V2", "file": "14_Library-V2.png", "order": 14 },
+  { "slug": "components-v2", "title": "Components V2", "file": "Components-V2.png", "order": 15 },
+  { "slug": "samples-v2", "title": "Samples V2", "file": "Samples-V2.png", "order": 16 },
+  { "slug": "admin-v2", "title": "Admin V2", "file": "Admin-V2.png", "order": 17 }
 ]
 

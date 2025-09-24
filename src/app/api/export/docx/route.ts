@@ -23,9 +23,14 @@ export async function POST(req: NextRequest) {
       } else {
         const text = await req.text();
         try {
-          const body = JSON.parse(text);
-          title = String((body as any)?.title ?? title);
-          content = String((body as any)?.content ?? content);
+          const body: unknown = JSON.parse(text);
+          if (body && typeof body === 'object') {
+            const obj = body as Record<string, unknown>;
+            const maybeTitle = obj.title;
+            const maybeContent = obj.content;
+            if (typeof maybeTitle === 'string') title = maybeTitle;
+            if (typeof maybeContent === 'string') content = maybeContent;
+          }
         } catch {
           // treat raw text as content
           content = text || content;

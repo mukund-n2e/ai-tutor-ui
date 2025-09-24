@@ -9,10 +9,10 @@ type ValResult = { status: Verdict; score: number; suggestions: string[] };
 
 function SessionInner() {
   const sp = useSearchParams();
-  const verb = sp.get('verb') ?? 'Create';
-  const persona = sp.get('persona') ?? 'Creator';
-  const minutes = sp.get('minutes') ?? '20';
-  const task = sp.get('task') ?? '';
+  const verb = sp?.get('verb') ?? 'Create';
+  const persona = sp?.get('persona') ?? 'Creator';
+  const minutes = sp?.get('minutes') ?? '20';
+  const task = sp?.get('task') ?? '';
 
   const [m1, setM1] = useState(''); const [m2, setM2] = useState(''); const [m3, setM3] = useState('');
   const [state, setState] = useState<RunState>('idle');

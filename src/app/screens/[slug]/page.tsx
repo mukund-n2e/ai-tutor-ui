@@ -4,17 +4,26 @@ import Link from 'next/link';
 import Image from 'next/image';
 import data from '../../../data/screens.json';
 
+type Screen = {
+  slug: string;
+  title: string;
+  file?: string;
+  route?: string;
+  exists?: boolean;
+  order?: number;
+};
+
 export async function generateStaticParams() {
-  const screens = (data as any[]);
+  const screens = data as unknown as Screen[];
   return screens.map(s => ({ slug: s.slug }));
 }
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }>}): Promise<Metadata> {
-  const { slug } = await params; const s = (data as any[]).find(x => x.slug === slug);
+  const { slug } = await params; const s = (data as unknown as Screen[]).find(x => x.slug === slug);
   return { title: s ? `Screen • ${s.title}` : 'Screen' };
 }
 export default async function ScreenPage({ params }: { params: Promise<{ slug: string }>}) {
   const { slug } = await params;
-  const s = (data as any[]).find(x => x.slug === slug);
+  const s = (data as unknown as Screen[]).find(x => x.slug === slug);
   if (!s) return notFound();
   return (
     <main style={{maxWidth:1100, margin:'40px auto', padding:'0 16px'}}>

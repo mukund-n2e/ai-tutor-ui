@@ -1,9 +1,20 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import data from '../../data/screens.json';
+
+type Screen = {
+  slug: string;
+  title: string;
+  file?: string;
+  route?: string;
+  exists?: boolean;
+  order?: number;
+};
 export const metadata = { title: 'Screens' };
 export default function ScreensIndex() {
-  const screens = (data as any[]).slice().sort((a,b)=>(a.order??999)-(b.order??999));
+  const screens = (data as unknown as Screen[])
+    .slice()
+    .sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
   return (
     <main style={{maxWidth:1100, margin:'40px auto', padding:'0 16px'}}>
       <h1 style={{marginBottom:8}}>Design Screens</h1>

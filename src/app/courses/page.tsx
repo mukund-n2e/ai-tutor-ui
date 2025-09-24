@@ -18,7 +18,10 @@ export default function CoursesPage() {
             <div style={{fontSize: 14, opacity: 0.8, marginBottom: 12}}>
               {c.level ?? 'Unrated'} • ~{c.estMinutes ?? 20} min • {c.lessonsCount} lessons
             </div>
-            <Link href={`/courses/${c.slug}`}>Open course →</Link>
+            <div style={{display:'flex', gap:12}}>
+              <Link href={`/courses/${c.slug}`}>Open course →</Link>
+              <Link href={`/session?verb=Create&persona=${encodeURIComponent(c.title)}&minutes=${c.estMinutes ?? 20}&task=starter`} style={{background:'#FF6B35', color:'#fff', padding:'6px 10px', borderRadius:6}}>Start micro-course</Link>
+            </div>
           </article>
         ))}
       </div>

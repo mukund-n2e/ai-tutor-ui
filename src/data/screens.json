@@ -1,0 +1,20 @@
+[
+  { "slug": "01-landing", "title": "01 landing", "file": "01-landing.png", "order": 1 },
+  { "slug": "02-intake", "title": "02 intake", "file": "02-intake.png", "order": 2 },
+  { "slug": "03-samples", "title": "03 samples", "file": "03-samples.png", "order": 3 },
+  { "slug": "04-session", "title": "04 session", "file": "04-session.png", "order": 4 },
+  { "slug": "05-validator", "title": "05 validator", "file": "05-validator.png", "order": 5 },
+  { "slug": "06-ship", "title": "06 ship", "file": "06-ship.png", "order": 6 },
+  { "slug": "07-errors-caps", "title": "07 errors caps", "file": "07-errors-caps.png", "order": 7 },
+  { "slug": "08-account", "title": "08 account", "file": "08-account.png", "order": 8 },
+  { "slug": "09-library", "title": "09 library", "file": "09-library.png", "order": 9 },
+  { "slug": "10-admin", "title": "10 admin", "file": "10-admin.png", "order": 10 },
+  { "slug": "11-components", "title": "11 components", "file": "11-components.png", "order": 11 },
+  { "slug": "12-todo", "title": "12 todo", "todo": true, "order": 12 },
+  { "slug": "13-todo", "title": "13 todo", "todo": true, "order": 13 },
+  { "slug": "14-todo", "title": "14 todo", "todo": true, "order": 14 },
+  { "slug": "15-todo", "title": "15 todo", "todo": true, "order": 15 },
+  { "slug": "16-todo", "title": "16 todo", "todo": true, "order": 16 },
+  { "slug": "17-todo", "title": "17 todo", "todo": true, "order": 17 }
+]
+

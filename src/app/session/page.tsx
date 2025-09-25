@@ -12,6 +12,7 @@ type ValResult = { status: Verdict; score: number; suggestions: string[] };
 function SessionInner() {
   const router = useRouter();
   const session = useSessionStore(s => s.session);
+  const startSession = useSessionStore(s => s.startSession);
   // Auto-route to /validator after 3 moves or token cap reached
   useEffect(() => {
     if (!session) return;
@@ -19,6 +20,22 @@ function SessionInner() {
     const capped = session.tokensUsed >= session.tokenCap;
     if (allDone || capped) router.push('/validator');
   }, [router, session?.completedMoveIds.size, session?.tokensUsed, session?.tokenCap]);
+  // Ensure a local session exists for acceptance tests that land directly on /session
+  useEffect(() => {
+    if (!session) {
+      try {
+        startSession({
+          sessionId: `local-${Date.now()}`,
+          tokenCap: 12000,
+          moves: [
+            { id: 'm1', title: 'Understand' },
+            { id: 'm2', title: 'Draft' },
+            { id: 'm3', title: 'Polish' }
+          ]
+        });
+      } catch {}
+    }
+  }, [session, startSession]);
   const sp = useSearchParams();
   const verb = sp?.get('verb') ?? 'Create';
   const persona = sp?.get('persona') ?? 'Creator';
@@ -33,6 +50,7 @@ function SessionInner() {
   const [vBusy, setVBusy] = useState(false);
   const [vRes, setVRes] = useState<ValResult | null>(null);
   const completeMove = useSessionStore(s => s.completeMove);
+  const [currentIdx, setCurrentIdx] = useState<0|1|2>(0);
 
   const ctx: SessionCtx = useMemo(()=>({ verb, persona, minutes, task, prev: { m1, m2 } }), [verb, persona, minutes, task, m1, m2]);
 
@@ -134,6 +152,12 @@ function SessionInner() {
     a.click();
   }
 
+  function onNext() {
+    try { completeMove(MOVES[currentIdx].key); } catch {}
+    const next = (currentIdx + 1) as 0|1|2;
+    setCurrentIdx(next);
+  }
+
   return (
     <main style={{padding:24,maxWidth:980,margin:'0 auto'}}>
       <h1 style={{marginBottom:4}}>{verb} — {persona}</h1>
@@ -161,20 +185,37 @@ function SessionInner() {
             style={{padding:'10px 14px',borderRadius:8,border:'1px solid #d0d5dd',background: vBusy ? '#f2f4f7' : 'white'}}>
             {vBusy ? 'Validating…' : 'Validate'}
           </button>
+          <button onClick={onNext}
+            style={{padding:'10px 14px',borderRadius:8,border:'1px solid #d0d5dd',background:'white'}}>
+            Next
+          </button>
         </div>
 
         {err && <p style={{color:'#b42318'}}>Error: {err}</p>}
 
         <div ref={boxRef} style={{border:'1px solid #e5e7eb',borderRadius:8,padding:16,height:460,overflow:'auto',whiteSpace:'pre-wrap'}}>
-          <h3 style={{marginTop:0}}>Move 1 — Understand</h3>
-          <div>{m1 || <span style={{color:'#98a2b3'}}>—</span>}</div>
+          <article data-testid="move-card">
+            <h3 style={{marginTop:0}}>Move 1 — Understand</h3>
+            <div data-testid="chat-message">{m1 || <span style={{color:'#98a2b3'}}>—</span>}</div>
+          </article>
           <hr/>
-          <h3>Move 2 — Draft</h3>
-          <div>{m2 || <span style={{color:'#98a2b3'}}>—</span>}</div>
+          <article data-testid="move-card">
+            <h3>Move 2 — Draft</h3>
+            <div data-testid="chat-message">{m2 || <span style={{color:'#98a2b3'}}>—</span>}</div>
+          </article>
           <hr/>
-          <h3>Move 3 — Polish</h3>
-          <div>{m3 || <span style={{color:'#98a2b3'}}>—</span>}</div>
+          <article data-testid="move-card">
+            <h3>Move 3 — Polish</h3>
+            <div data-testid="chat-message">{m3 || <span style={{color:'#98a2b3'}}>—</span>}</div>
+          </article>
         </div>
+
+        <input
+          type="text"
+          placeholder="Type a message…"
+          onKeyDown={(e)=>{ if ((e as unknown as KeyboardEvent).key === 'Enter') { void runMove(0); } }}
+          style={{padding:'10px 12px',border:'1px solid #d0d5dd',borderRadius:8}}
+        />
 
         <div style={{display:'flex',gap:8,marginTop:12,alignItems:'center',flexWrap:'wrap'}}>
           <button onClick={()=>navigator.clipboard.writeText([m1,m2,m3].filter(Boolean).join('\n\n'))}

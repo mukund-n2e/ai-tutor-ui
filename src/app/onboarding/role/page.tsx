@@ -1,11 +1,12 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { useSessionStore } from '@/store/sessionStore';
+import type { RoleId } from '@/store/sessionStore';
 
-const ROLES = [
+const ROLES: readonly RoleId[] = [
   'Creator','Consultant/Coach','Tradie','Doctor/Clinician','Accountant/Bookkeeper',
   'Teacher','Senior/New-to-tech','Student/Grad','SMB Owner','Other'
-] as const;
+];
 
 export default function RolePage() {
   const router = useRouter();
@@ -23,7 +24,7 @@ export default function RolePage() {
             key={r}
             data-testid={`role-chip-${r}`}
             className={`px-3 py-2 rounded border ${role===r ? 'bg-black text-white' : 'bg-white text-black'}`}
-            onClick={() => selectRole(r as any)}
+            onClick={() => selectRole(r)}
           >
             {r}
           </button>

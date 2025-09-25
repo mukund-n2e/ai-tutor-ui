@@ -43,38 +43,46 @@ export default function ReadinessPage() {
 
       <fieldset className="mb-5">
         <legend className="font-medium mb-2">Used AI tools?</legend>
-        {Q1.map(o => (
-          <label key={o.label} className="mr-4">
-            <input type="radio" name="q1" value={o.value} onChange={() => setQ1(o.value)} /> {o.label}
-          </label>
-        ))}
+        <div role="radiogroup" aria-label="Used AI tools?">
+          {Q1.map(o => (
+            <label key={o.label} className="mr-4">
+              <input type="radio" name="q1" value={o.value} onChange={() => setQ1(o.value)} /> {o.label}
+            </label>
+          ))}
+        </div>
       </fieldset>
 
       <fieldset className="mb-5">
         <legend className="font-medium mb-2">Comfort editing AI output?</legend>
-        {Q2.map(o => (
-          <label key={o.label} className="mr-4">
-            <input type="radio" name="q2" value={o.value} onChange={() => setQ2(o.value)} /> {o.label}
-          </label>
-        ))}
+        <div role="radiogroup" aria-label="Comfort editing AI output?">
+          {Q2.map(o => (
+            <label key={o.label} className="mr-4">
+              <input type="radio" name="q2" value={o.value} onChange={() => setQ2(o.value)} /> {o.label}
+            </label>
+          ))}
+        </div>
       </fieldset>
 
       <fieldset className="mb-5">
         <legend className="font-medium mb-2">Do you automate anything today?</legend>
-        {Q3.map(o => (
-          <label key={o.label} className="mr-4">
-            <input type="radio" name="q3" value={o.value} onChange={() => setQ3(o.value)} /> {o.label}
-          </label>
-        ))}
+        <div role="radiogroup" aria-label="Do you automate anything today?">
+          {Q3.map(o => (
+            <label key={o.label} className="mr-4">
+              <input type="radio" name="q3" value={o.value} onChange={() => setQ3(o.value)} /> {o.label}
+            </label>
+          ))}
+        </div>
       </fieldset>
 
       <fieldset className="mb-8">
         <legend className="font-medium mb-2">Guidance style (not scored):</legend>
-        {Q4.map(label => (
-          <label key={label} className="mr-4">
-            <input type="radio" name="q4" value={label} onChange={() => setQ4(label)} /> {label}
-          </label>
-        ))}
+        <div role="radiogroup" aria-label="Guidance style (not scored):">
+          {Q4.map(label => (
+            <label key={label} className="mr-4">
+              <input type="radio" name="q4" value={label} onChange={() => setQ4(label)} /> {label}
+            </label>
+          ))}
+        </div>
       </fieldset>
 
       <button

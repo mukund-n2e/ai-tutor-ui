@@ -19,14 +19,25 @@ export default function ReadinessPage() {
   const assessment = useSessionStore(s => s.assessment);
   const setAssessment = useSessionStore(s => s.setAssessment);
   const setReadiness = useSessionStore(s => s.setReadiness);
+  const profile = useSessionStore(s => s.profile);
+
+  const hasExisting = profile.score != null && profile.level != null;
 
   const ready = assessment.usedAiTools != null && assessment.comfortEditing != null && assessment.automateToday != null;
 
   function onContinue() {
-    if (!ready) return;
-    const score = computeScore(assessment.usedAiTools!, assessment.comfortEditing!, assessment.automateToday!);
-    const level = levelFromScore(score);
-    setReadiness(score, level, assessment.guidanceStyle);
+    if (ready) {
+      const score = computeScore(
+        assessment.usedAiTools!, assessment.comfortEditing!, assessment.automateToday!
+      );
+      const level = levelFromScore(score);
+      setReadiness(score, level, assessment.guidanceStyle);
+    } else if (hasExisting) {
+      // User came back just to tweak guidance; keep prior score/level
+      setReadiness(profile.score!, profile.level!, assessment.guidanceStyle);
+    } else {
+      return; // still nothing to proceed with
+    }
     router.push('/onboarding/proposal');
   }
 
@@ -89,8 +100,10 @@ export default function ReadinessPage() {
 
       <button
         type="button"
-        disabled={!ready}
-        className={`px-4 py-2 rounded ${ready ? 'bg-black text-white' : 'bg-gray-300 text-gray-600 cursor-not-allowed'}`}
+        disabled={!(ready || hasExisting)}
+        className={`px-4 py-2 rounded ${
+          (ready || hasExisting) ? 'bg-black text-white' : 'bg-gray-300 text-gray-600 cursor-not-allowed'
+        }`}
         onClick={onContinue}
       >
         Continue

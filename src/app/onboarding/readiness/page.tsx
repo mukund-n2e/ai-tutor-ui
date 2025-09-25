@@ -2,37 +2,31 @@
 import { useRouter } from 'next/navigation';
 import { useSessionStore } from '@/store/sessionStore';
 import { computeScore, levelFromScore } from '@/lib/scoring';
-import { useState } from 'react';
 
-type Opt<T extends string> = { label: T; value: number };
+const Q1 = ['Never','Once','Monthly','Weekly','Daily'] as const;
+const Q1V = { Never:0, Once:1, Monthly:2, Weekly:3, Daily:4 } as const;
 
-const Q1: Opt<'Never'|'Once'|'Monthly'|'Weekly'|'Daily'>[] = [
-  {label:'Never',value:0},{label:'Once',value:1},{label:'Monthly',value:2},{label:'Weekly',value:3},{label:'Daily',value:4}
-];
-const Q2: Opt<'Not comfortable'|'Somewhat'|'Confident'>[] = [
-  {label:'Not comfortable',value:0},{label:'Somewhat',value:2},{label:'Confident',value:4}
-];
-const Q3: Opt<'No'|'A little'|'Yes, regularly'>[] = [
-  {label:'No',value:0},{label:'A little',value:2},{label:'Yes, regularly',value:4}
-];
+const Q2 = ['Not comfortable','Somewhat','Confident'] as const;
+const Q2V = { 'Not comfortable':0, 'Somewhat':2, 'Confident':4 } as const;
+
+const Q3 = ['No','A little','Yes, regularly'] as const;
+const Q3V = { 'No':0, 'A little':2, 'Yes, regularly':4 } as const;
+
 const Q4 = ['Hand-holding','Balanced','Just the steps'] as const;
 
 export default function ReadinessPage() {
   const router = useRouter();
+  const assessment = useSessionStore(s => s.assessment);
+  const setAssessment = useSessionStore(s => s.setAssessment);
   const setReadiness = useSessionStore(s => s.setReadiness);
 
-  const [q1, setQ1] = useState<number|undefined>();
-  const [q2, setQ2] = useState<number|undefined>();
-  const [q3, setQ3] = useState<number|undefined>();
-  const [q4, setQ4] = useState<typeof Q4[number]|undefined>();
-
-  const ready = q1!=null && q2!=null && q3!=null;
+  const ready = assessment.usedAiTools != null && assessment.comfortEditing != null && assessment.automateToday != null;
 
   function onContinue() {
     if (!ready) return;
-    const score = computeScore(q1!, q2!, q3!);
+    const score = computeScore(assessment.usedAiTools!, assessment.comfortEditing!, assessment.automateToday!);
     const level = levelFromScore(score);
-    setReadiness(score, level, q4);
+    setReadiness(score, level, assessment.guidanceStyle);
     router.push('/onboarding/proposal');
   }
 
@@ -41,48 +35,56 @@ export default function ReadinessPage() {
       <h1 className="text-2xl font-semibold">Quick AI readiness check</h1>
       <p className="text-sm text-gray-600 mb-6">≤20s</p>
 
-      <fieldset className="mb-5">
+      <fieldset role="radiogroup" aria-label="Used AI tools?" className="mb-5">
         <legend className="font-medium mb-2">Used AI tools?</legend>
-        <div role="radiogroup" aria-label="Used AI tools?">
-          {Q1.map(o => (
-            <label key={o.label} className="mr-4">
-              <input type="radio" name="q1" value={o.value} onChange={() => setQ1(o.value)} /> {o.label}
-            </label>
-          ))}
-        </div>
+        {Q1.map(label => (
+          <label key={label} className="mr-4">
+            <input
+              type="radio" name="q1"
+              checked={assessment.usedAiTools === Q1V[label]}
+              onChange={() => setAssessment({ usedAiTools: Q1V[label] })}
+            /> {label}
+          </label>
+        ))}
       </fieldset>
 
-      <fieldset className="mb-5">
+      <fieldset role="radiogroup" aria-label="Comfort editing AI output?" className="mb-5">
         <legend className="font-medium mb-2">Comfort editing AI output?</legend>
-        <div role="radiogroup" aria-label="Comfort editing AI output?">
-          {Q2.map(o => (
-            <label key={o.label} className="mr-4">
-              <input type="radio" name="q2" value={o.value} onChange={() => setQ2(o.value)} /> {o.label}
-            </label>
-          ))}
-        </div>
+        {Q2.map(label => (
+          <label key={label} className="mr-4">
+            <input
+              type="radio" name="q2"
+              checked={assessment.comfortEditing === Q2V[label]}
+              onChange={() => setAssessment({ comfortEditing: Q2V[label] })}
+            /> {label}
+          </label>
+        ))}
       </fieldset>
 
-      <fieldset className="mb-5">
+      <fieldset role="radiogroup" aria-label="Do you automate anything today?" className="mb-5">
         <legend className="font-medium mb-2">Do you automate anything today?</legend>
-        <div role="radiogroup" aria-label="Do you automate anything today?">
-          {Q3.map(o => (
-            <label key={o.label} className="mr-4">
-              <input type="radio" name="q3" value={o.value} onChange={() => setQ3(o.value)} /> {o.label}
-            </label>
-          ))}
-        </div>
+        {Q3.map(label => (
+          <label key={label} className="mr-4">
+            <input
+              type="radio" name="q3"
+              checked={assessment.automateToday === Q3V[label]}
+              onChange={() => setAssessment({ automateToday: Q3V[label] })}
+            /> {label}
+          </label>
+        ))}
       </fieldset>
 
-      <fieldset className="mb-8">
+      <fieldset role="radiogroup" aria-label="Guidance style (not scored):" className="mb-8">
         <legend className="font-medium mb-2">Guidance style (not scored):</legend>
-        <div role="radiogroup" aria-label="Guidance style (not scored):">
-          {Q4.map(label => (
-            <label key={label} className="mr-4">
-              <input type="radio" name="q4" value={label} onChange={() => setQ4(label)} /> {label}
-            </label>
-          ))}
-        </div>
+        {Q4.map(label => (
+          <label key={label} className="mr-4">
+            <input
+              type="radio" name="q4"
+              checked={assessment.guidanceStyle === label}
+              onChange={() => setAssessment({ guidanceStyle: label })}
+            /> {label}
+          </label>
+        ))}
       </fieldset>
 
       <button

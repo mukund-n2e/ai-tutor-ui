@@ -15,19 +15,30 @@ type Session = {
   completedMoveIds: Set<string>;
 };
 
+type Guidance = 'Hand-holding' | 'Balanced' | 'Just the steps';
+
 type State = {
   profile: {
     role?: RoleId;
     score?: number;
     level?: Level;
-    guidanceStyle?: 'Hand-holding' | 'Balanced' | 'Just the steps';
+    guidanceStyle?: Guidance;
+  };
+  // Keep raw answers so back-nav restores selection
+  assessment: {
+    usedAiTools?: number;      // q1: 0..4
+    comfortEditing?: number;   // q2: 0,2,4
+    automateToday?: number;    // q3: 0,2,4
+    guidanceStyle?: Guidance;  // q4: string (not scored)
   };
   course?: { id: string; title: string; heroMoves: Move[] };
   session?: Session;
 };
 type Actions = {
   selectRole: (role: RoleId) => void;
-  setReadiness: (score: number, level: Level, guidance?: State['profile']['guidanceStyle']) => void;
+  setAssessment: (patch: Partial<State['assessment']>) => void;
+  resetAssessment: () => void;
+  setReadiness: (score: number, level: Level, guidance?: Guidance) => void;
   setCourse: (course: State['course']) => void;
   startSession: (payload: { sessionId: string; tokenCap: number; moves: Move[] }) => void;
   completeMove: (moveId: string) => void;
@@ -36,9 +47,20 @@ type Actions = {
 
 export const useSessionStore = create<State & Actions>((set, get) => ({
   profile: {},
+  assessment: {},
+
   selectRole: (role) => set((s) => ({ profile: { ...s.profile, role } })),
+
+  setAssessment: (patch) =>
+    set((s) => ({ assessment: { ...s.assessment, ...patch } })),
+
+  resetAssessment: () => set({ assessment: {} }),
+
   setReadiness: (score, level, guidanceStyle) =>
-    set((s) => ({ profile: { ...s.profile, score, level, guidanceStyle } })),
+    set((s) => ({
+      profile: { ...s.profile, score, level, guidanceStyle: guidanceStyle ?? s.profile.guidanceStyle }
+    })),
+
   setCourse: (course) => set({ course: course ?? undefined }),
   startSession: ({ sessionId, tokenCap, moves }) =>
     set({

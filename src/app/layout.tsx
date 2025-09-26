@@ -1,5 +1,6 @@
 import '../styles/components.css';
 import '../styles/tokens.css';
+import '@/styles/brand.css';
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -24,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-ssr-beta="true">
-      <body className={`${inter.variable} antialiased`} data-ssr-beta="true">
+      <body className={`${inter.variable} antialiased grid-container`} data-ssr-beta="true">
         <TopNav />
         {children}
         {/* SSR beta marker for monitors */}

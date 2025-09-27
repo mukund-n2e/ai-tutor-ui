@@ -1,16 +1,3 @@
-import { NextRequest, NextResponse } from "next/server";
-
-export const config = { matcher: ["/screens"] };
-
-export default function middleware(req: NextRequest) {
-  const isProd = process.env.NODE_ENV === "production";
-  const debugOn = process.env.NEXT_PUBLIC_UI_DEBUG === "1";
-  if (isProd && !debugOn) {
-    return NextResponse.redirect(new URL("/", req.url));
-  }
-  return NextResponse.next();
-}
-
 import { NextResponse, type NextRequest } from 'next/server';
 
 // Env knobs (defaults are conservative)
@@ -24,7 +11,6 @@ const enc = new TextEncoder();
 const dec = new TextDecoder();
 let keyPromise: Promise<CryptoKey> | null = null;
 
-// Import an HMAC-SHA-256 key using Web Crypto (Edge runtime safe)
 function hmacKey() {
   if (!keyPromise) {
     keyPromise = crypto.subtle.importKey(
@@ -64,7 +50,6 @@ async function verify(payloadB64u: string, sigB64u: string) {
   const key = await hmacKey();
   const bytes = fromB64Url(payloadB64u);
   const expSig = await crypto.subtle.sign('HMAC', key, bytes);
-  // constant-time-ish compare on Uint8Array
   const a = fromB64Url(sigB64u);
   const b = new Uint8Array(expSig);
   if (a.length !== b.length) return false;
@@ -98,24 +83,33 @@ async function writeState(res: NextResponse, st: RLState) {
     value: `${payload}.${sig}`,
     httpOnly: true,
     path: '/',
-    sameSite: 'lax',     // NOTE: lowercase per ResponseCookie type
+    sameSite: 'lax',
     secure: true,
     maxAge: 7 * 24 * 3600
   });
 }
 
-export async function middleware(req: NextRequest) {
-  // Guard only the SSE endpoint
-  if (req.nextUrl.pathname !== '/api/tutor/stream') {
+export default async function middleware(req: NextRequest) {
+  const pathname = req.nextUrl.pathname;
+
+  // Guard /screens in production unless debug flag is on
+  if (pathname.startsWith('/screens')) {
+    const isProd = process.env.NODE_ENV === 'production';
+    const debugOn = process.env.NEXT_PUBLIC_UI_DEBUG === '1';
+    if (isProd && !debugOn) {
+      return NextResponse.redirect(new URL('/', req.url));
+    }
+    return NextResponse.next();
+  }
+
+  // Rate-limit the SSE tutor stream endpoint
+  if (pathname !== '/api/tutor/stream') {
     return NextResponse.next();
   }
 
   let st = await readState(req.cookies.get('n2e_rl')?.value);
   const now = nowSec();
-
-  // rotate window if expired
   if (now - st.s >= WIN) st = { s: now, c: 0 };
-
   if (st.c >= MAX) {
     return new NextResponse(
       JSON.stringify({
@@ -127,13 +121,9 @@ export async function middleware(req: NextRequest) {
       { status: 429, headers: { 'content-type': 'application/json' } }
     );
   }
-
   const res = NextResponse.next();
   await writeState(res, { s: st.s, c: st.c + 1 });
   return res;
 }
 
-// Only match the SSE route
-export const config = {
-  matcher: ['/api/tutor/stream']
-};
+export const config = { matcher: ['/api/tutor/stream', '/screens'] };

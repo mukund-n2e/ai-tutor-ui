@@ -7,18 +7,17 @@ export default function Page() {
       <section className="hero">
         <p className="eyebrow">AI Tutor</p>
         <h1>
-          Get unstuck fast—<span className="accent">learn by doing</span>.
+          Learn and apply AI to your job. No fluff.
         </h1>
         <p className="subhead">
-          A focused AI tutor that gives hints, not answers. Socratic prompts,
-          code-aware explanations, and citations so you trust what you learn.
+          Pick a job task. We'll guide three decisive moves, validate, and you're done.
         </p>
 
         <div className="cta-row">
-          <Link href="/app" className="btn btn-primary" aria-label="Try the tutor">
+          <Link href="/onboarding/role" className="btn btn-primary" aria-label="Start onboarding">
             Try the tutor
           </Link>
-          <Link href="/demo" className="btn btn-secondary" aria-label="Watch a quick demo">
+          <Link href="/samples" className="btn btn-secondary" aria-label="Watch a quick demo">
             Watch demo
           </Link>
         </div>
@@ -36,7 +35,7 @@ export default function Page() {
       <footer className="footer">
         <div className="container footer-inner">
           <div>© {new Date().getFullYear()} AI Tutor</div>
-          {/* Add links later if desired; keeping clean per request */}
+          <div>Incognito by default. Nothing saved unless you say so.</div>
         </div>
       </footer>
     </>

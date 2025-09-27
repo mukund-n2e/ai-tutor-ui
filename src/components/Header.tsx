@@ -10,7 +10,7 @@ export default function Header() {
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
           <Image
-            src="/brand/ai-tutor-mark.svg"
+            src="/brand/logo.svg"
             alt="AI Tutor"
             width={28}
             height={28}

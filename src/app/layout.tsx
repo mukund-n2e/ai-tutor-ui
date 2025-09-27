@@ -15,7 +15,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "AI Tutor",
   description: "Learn and apply AI to your job. No fluff.",
-  icons: { icon: '/brand/ai-tutor-mark.svg' }
+  icons: { icon: '/brand/logo.svg' }
 };
 
 export default function RootLayout({

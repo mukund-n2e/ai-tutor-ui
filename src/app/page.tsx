@@ -1,51 +1,44 @@
-import Link from 'next/link';
+// web/src/app/page.tsx
+import Link from "next/link";
 
-export default function LandingPage() {
-  const verbs = ['Create', 'Automate', 'Analyze', 'Decide', 'Personalize', 'Connect'];
+export default function Page() {
   return (
-    <main className="mx-auto max-w-3xl p-6">
-      <section className="rounded-2xl border border-orange-100 bg-orange-50/60 px-6 py-10 text-center">
-        <h1 className="text-4xl font-bold tracking-tight">
-          Learn and apply AI to your job. No fluff.
+    <>
+      <section className="hero">
+        <p className="eyebrow">AI Tutor</p>
+        <h1>
+          Get unstuck fast—<span className="accent">learn by doing</span>.
         </h1>
-        <p className="mt-3 text-lg text-gray-600">
-          Pick a job task. We&apos;ll guide three decisive moves, validate, and you&apos;re done.
+        <p className="subhead">
+          A focused AI tutor that gives hints, not answers. Socratic prompts,
+          code-aware explanations, and citations so you trust what you learn.
         </p>
 
-        <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-          <Link
-            href="/onboarding/role"
-            className="inline-flex items-center justify-center rounded-md px-5 py-3 font-medium bg-orange-500 text-white hover:bg-orange-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-            data-testid="cta-start-from-work"
-          >
-            Start from your work
+        <div className="cta-row">
+          <Link href="/app" className="btn btn-primary" aria-label="Try the tutor">
+            Try the tutor
           </Link>
-          <Link
-            href="/samples"
-            className="inline-flex items-center justify-center px-5 py-3 font-medium underline"
-            data-testid="cta-try-a-sample"
-          >
-            Try a sample
+          <Link href="/demo" className="btn btn-secondary" aria-label="Watch a quick demo">
+            Watch demo
           </Link>
         </div>
+
+        <ul className="chips">
+          <li className="chip">Step‑by‑step hints</li>
+          <li className="chip">Socratic questions</li>
+          <li className="chip">Code explanations</li>
+          <li className="chip">Citations & sources</li>
+          <li className="chip">LaTeX & markdown</li>
+          <li className="chip">Progress‑aware</li>
+        </ul>
       </section>
 
-      <div className="mt-8 flex flex-wrap gap-2" aria-label="verbs">
-        {verbs.map(v => (
-          <span
-            key={v}
-            className="select-none rounded-full border px-3 py-1 text-sm"
-            data-testid={`verb-chip-${v}`}
-            aria-disabled="true"
-          >
-            {v}
-          </span>
-        ))}
-      </div>
-
-      <footer className="mt-12 text-sm text-gray-500">
-        Incognito by default. Nothing saved unless you say so.
+      <footer className="footer">
+        <div className="container footer-inner">
+          <div>© {new Date().getFullYear()} AI Tutor</div>
+          {/* Add links later if desired; keeping clean per request */}
+        </div>
       </footer>
-    </main>
+    </>
   );
 }

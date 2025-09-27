@@ -1,35 +1,19 @@
-import '../styles/components.css';
-import '../styles/tokens.css';
-import '@/styles/brand.css';
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import Header from "@/components/Header";
+// web/src/app/layout.tsx
+import type { ReactNode } from "react";
+import "../styles/ai-tutor.css";
+import HeaderBar from "../components/HeaderBar";
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: 'swap'
-});
-
-export const metadata: Metadata = {
+export const metadata = {
   title: "AI Tutor",
-  description: "Learn and apply AI to your job. No fluff.",
-  icons: { icon: '/brand/logo.svg' }
+  description: "Learn faster with a focused AI tutor.",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" data-ssr-beta="true">
-      <body className={`${inter.variable} antialiased grid-container`} data-ssr-beta="true">
-        <Header />
-        {children}
-        {/* SSR beta marker for monitors */}
-        <div data-ssr-beta="true" style={{ display: 'none' }}>BETA</div>
+    <html lang="en">
+      <body className="ai-body">
+        <HeaderBar />
+        <main className="container">{children}</main>
       </body>
     </html>
   );

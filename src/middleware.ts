@@ -1,3 +1,16 @@
+import { NextRequest, NextResponse } from "next/server";
+
+export const config = { matcher: ["/screens"] };
+
+export default function middleware(req: NextRequest) {
+  const isProd = process.env.NODE_ENV === "production";
+  const debugOn = process.env.NEXT_PUBLIC_UI_DEBUG === "1";
+  if (isProd && !debugOn) {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
+  return NextResponse.next();
+}
+
 import { NextResponse, type NextRequest } from 'next/server';
 
 // Env knobs (defaults are conservative)

@@ -4,7 +4,7 @@ import '@/styles/brand.css';
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import TopNav from "@/components/TopNav";
+import Header from "@/components/Header";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en" data-ssr-beta="true">
       <body className={`${inter.variable} antialiased grid-container`} data-ssr-beta="true">
-        <TopNav />
+        <Header />
         {children}
         {/* SSR beta marker for monitors */}
         <div data-ssr-beta="true" style={{ display: 'none' }}>BETA</div>

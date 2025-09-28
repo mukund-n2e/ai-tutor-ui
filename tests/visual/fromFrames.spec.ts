@@ -23,9 +23,28 @@ const routeFor = (key: string) => {
 };
 
 const bps = [
-  { name: 'desktop', width: 1440, height: 900, threshold: 0.015 },
-  { name: 'mobile',  width:  390, height: 844, threshold: 0.020 },
+  { name: 'desktop', width: 1440, height: 900, threshold: 0.01 },
+  { name: 'mobile',  width:  390, height: 844, threshold: 0.01 },
 ];
+
+// Global stability knobs
+test.use({
+  deviceScaleFactor: 1,
+  colorScheme: 'light',
+  hasTouch: false,
+});
+
+test.beforeEach(async ({ page }) => {
+  // Freeze animations/transitions and prefer-reduced-motion
+  await page.addStyleTag({ content: `
+    * { transition: none !important; animation: none !important; }
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.001s !important; transition-duration: 0.001s !important; }
+    }
+  `});
+  // Lock timestamps used in UI to avoid diff noise
+  await page.addInitScript(() => { (Date as any).now = () => 1700000000000; });
+});
 
 test.describe('Visuals match baselines', () => {
   for (const [key] of Object.entries<any>(frames.frames)) {
@@ -33,7 +52,8 @@ test.describe('Visuals match baselines', () => {
     if (!route) continue;
     for (const bp of bps) {
       const baseline = path.join(expectedDir, `${key}-${bp.name}.png`);
-      test(`${route} @${bp.name}`, async ({ page }) => {
+      test(`${route} @${bp.name}`, async ({ page, browserName }) => {
+        if (browserName !== 'chromium') test.skip(true, 'Run visual diffs on Chromium only');
         if (!fs.existsSync(baseline)) test.skip(true, `No baseline: ${baseline}`);
         await page.setViewportSize({ width: bp.width, height: bp.height });
         await page.goto(`${BASE}${route}`, { waitUntil: 'networkidle' });

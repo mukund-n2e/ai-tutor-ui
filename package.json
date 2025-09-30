@@ -6,7 +6,7 @@
     "dev": "next dev",
     "gen:screens": "node ./scripts/gen-screens-manifest.mjs",
     "build": "next build",
-    "vercel-build": "npm run gen:screens && next build",
+    "vercel-build": "next build",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",

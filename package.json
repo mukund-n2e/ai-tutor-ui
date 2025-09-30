@@ -19,6 +19,7 @@
     "next": "15.5.2",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "stripe": "^18.5.0",
     "zustand": "^4.5.7"
   },
   "devDependencies": {

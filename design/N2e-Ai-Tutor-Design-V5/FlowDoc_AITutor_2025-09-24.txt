@@ -1,0 +1,53 @@
+# AI Tutor Platform - User Flow Documentation
+
+## Overview
+Complete user journey documentation for the nudge2edge AI Tutor platform.
+
+## User Personas
+- **Creator**: Content creators, marketers, individual contributors
+- **Consultant**: Business consultants, freelancers, agency professionals
+
+## Core User Flows
+
+### 1. Onboarding Flow
+1. Landing page with value proposition
+2. Verb selection (Create, Automate, Analyze, Decide, Personalize, Connect)
+3. Task description input
+4. User type selection (Creator/Consultant)
+5. Time box selection (20/40/60 minutes)
+
+### 2. Session Flow
+1. Move generation (3 structured moves)
+2. Interactive AI tutoring with real-time feedback
+3. Progress tracking and token usage monitoring
+4. Validation checkpoints
+
+### 3. Validation Flow
+1. Automated quality checks
+2. Format-specific validators (YouTube, Proposal, etc.)
+3. Pass/Fail/Soft validation results
+4. Fix recommendations and improvements
+
+### 4. Export Flow
+1. Content preview and editing
+2. Multiple export formats (.md, .pdf, .docx)
+3. Copy to clipboard functionality
+4. Save to library option
+
+## Technical Specifications
+- Responsive design: 1440px (desktop), 768px (tablet), 390px (mobile)
+- 12-column grid system with Auto Layout
+- Token-based session management
+- Real-time streaming interface
+- Accessibility compliance (WCAG 2.1 AA)
+
+## Design System
+- Primary brand color: #FF6B35 (nudge2edge orange)
+- Typography: Inter font family
+- Spacing scale: 4/8/12/16/24/32/48px
+- Border radius: 8px/12px
+- Component variants for all interactive elements
+
+Generated: 2025-09-24T05:28:34.163Z
+Platform: nudge2edge AI Tutor
+Version: 2.0.0

@@ -1,0 +1,11 @@
+screen: Terms
+route: /legal/terms
+breakpoints: [360, 768, 1200]
+sections:
+  - acceptance_of_terms
+  - use_of_service
+  - payments_and_refunds
+  - disclaimers_and_liability
+  - governing_law
+acceptance:
+  - Quiet, readable typography; anchor links; updated date

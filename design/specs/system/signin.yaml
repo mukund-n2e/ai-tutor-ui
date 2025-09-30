@@ -1,0 +1,7 @@
+screen: Sign in
+route: /account
+breakpoints: [360, 768, 1200]
+flow:
+  - single_field_email: sends magic link; shows "Link sent" state
+acceptance:
+  - No password; rate-limit POST; captcha or proof-of-work optional

@@ -1,0 +1,33 @@
+screen: Onboarding
+route: /onboarding
+breakpoints: [360, 768, 1200]
+copy:
+  title: "Let's tailor your Quick Win"
+  sub: "Three quick choices and we'll recommend your first 15‑minute win."
+sections:
+  - role: chips [Office admin, Small service business, Teacher, Healthcare admin, Student, Other] (Other reveals text input, max 40)
+  - comfort: chips [New to this, Used it a bit, Comfortable]
+  - goals: chips (Pick up to 2) [Save time, Better writing, Organise workflow, Clarify ideas, Learn basics]
+  - task: input 140 chars (optional)
+  - consent: checkbox toggles email field + note
+actions:
+  primary: "Show my Quick Win" -> /lesson/L1-05?via=onboarding
+  secondary: "Skip for now" -> /wall?via=onboarding
+acceptance:
+  - Chips are keyboard-activatable (Enter/Space) with aria-pressed
+  - Goals limited to 2; aria-describedby="goals-hint"
+  - When consent checked, email field appears (data-testid ob-email)
+  - No inline styles or hex/rgba literals in onboarding.module.css
+test_ids:
+  ob-title: page title
+  ob-cta-primary: primary CTA
+  ob-cta-secondary: secondary CTA
+  ob-consent-toggle: checkbox input
+  ob-email: email input (visible only when consent true)
+a11y:
+  - 44px min touch targets
+  - Visible focus outlines on all interactive controls
+  - Screen-reader hint "Pick up to 2"
+tokens:
+  - Import ../../styles/tokens.css
+  - Use --brand-accent, --surface(-hover|-muted), --text-*, --border

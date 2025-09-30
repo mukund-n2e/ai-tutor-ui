@@ -1,0 +1,28 @@
+screen: Landing
+route: /
+breakpoints: [360, 768, 1200]
+copy:
+  h1: "One skill. One small win. In 15 minutes."
+  sub: "Learn AI the human way—simple lessons that finish with something you can actually use."
+components:
+  - header: sticky, 64px; logo svg 32px; nav ["Sign in","Start free"]
+  - hero: h1, sub, CTA primary ("Try a sample"), CTA secondary ("Start free")
+  - demo-card: play button (aria-label "Preview demo"), bullets (2), preview button
+acceptance:
+  - Pixel match at 360/768/1200 using tokens.css
+  - No inline styles or hex/rgba literals in landing.module.css
+  - All interactive elements keyboard reachable with visible focus
+  - Test IDs present: hero-h1, btn-preview-demo
+test_ids:
+  hero-h1: h1 element
+  btn-preview-demo: demo play button
+a11y:
+  - Role semantics: header/nav/main
+  - Focus ring uses --brand-accent
+  - Buttons have accessible names
+tokens:
+  - Import ../../styles/tokens.css
+  - Use --brand-accent, --surface, --text-*, --section-gap, --header-height
+routes:
+  - /onboarding (from "Start free")
+  - /wall (optional from demo/preview)

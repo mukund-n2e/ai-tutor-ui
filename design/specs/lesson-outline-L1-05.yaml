@@ -1,0 +1,21 @@
+screen: Course Outline
+route: /lesson/L1-05/outline
+breakpoints: [360, 768, 1200]
+content:
+  header: "Rescue your inbox — outline"
+  quick_facts: [Level L1, Time ~15 min, Outcome, Artifact + sample link]
+  what_you_make: chips [level, duration, artifact]
+  how_it_works: ordered 4-step list (CSS counters)
+  requirements: bullet list (browser + Gmail suggested)
+  audience: chips [Office admin, Small service business, Teacher, Healthcare admin, Student]
+actions:
+  primary: "Start course" -> /lesson/L1-05?via=outline
+  secondary: "Back to courses" -> /wall?via=outline
+acceptance:
+  - Two-column desktop layout with sticky quick facts; stacked on tablet/mobile
+  - Semantic HTML (<ol>, <dl>, <aside>, role="region" for quick facts)
+  - No inline styles or hex/rgba; tokens only
+test_ids:
+  outline-title: h1
+  outline-facts: quick facts region
+  outline-steps: ordered list container

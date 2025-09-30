@@ -1,0 +1,37 @@
+screen: Pricing / Checkout
+route: /pricing
+breakpoints: [360, 768, 1200]
+plans:
+  - L1: Free forever
+  - L2: Paid
+  - L3: Paid
+  - L4: Coming soon (disabled)
+market_selector:
+  chips: [AU, IN] (single select; role="group", aria-pressed)
+pricing_logic:
+  currencies:
+    AU: AUD
+    IN: INR (enable via env STRIPE_ENABLE_INR=true; otherwise show "(charged in AUD today)" note)
+    default: USD (for geos outside AU/IN) — mirrors AUD numeric price
+order_summary:
+  desktop: sticky sidebar
+  mobile: sticky bottom bar
+checkout:
+  api: /api/checkout (POST) with planId & market; redirects to Stripe
+  success_url: /checkout/success
+  cancel_url: /pricing?canceled=1
+acceptance:
+  - No inline styles or hex/rgba in pricing.module.css
+  - Buttons labeled with correct currency symbol
+  - All interactive controls keyboard operable with focus styles
+test_ids:
+  chk-market-au/in: market chips
+  chk-plan-l1/l2/l3/l4: plan cards
+  chk-cta: primary checkout CTA
+env:
+  STRIPE_SECRET_KEY: sk_live_or_test
+  STRIPE_PRICE_L2_AUD: price_*
+  STRIPE_PRICE_L3_AUD: price_*
+  STRIPE_PRICE_L2_INR: price_* (optional)
+  STRIPE_PRICE_L3_INR: price_* (optional)
+  STRIPE_ENABLE_INR: "true" | "false"

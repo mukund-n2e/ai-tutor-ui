@@ -1,0 +1,10 @@
+screen: Privacy
+route: /legal/privacy
+breakpoints: [360, 768, 1200]
+sections:
+  - data_we_store
+  - how_we_use_it
+  - your_controls
+  - contact
+acceptance:
+  - Quiet, readable typography; anchor links; updated date

@@ -1,0 +1,105 @@
+id: system-legal-terms
+route: /legal/terms
+breakpoints: [360, 768, 1200]
+
+layout:
+  desktop:
+    grid: ["content: 2fr", "aside: 1fr"]   # sticky aside on desktop
+    sticky_aside: true
+  tablet_mobile:
+    stacked: true
+
+components:
+  uses:
+    - Header               # existing component
+    - Card                 # existing component
+    - Button               # existing component
+  styles: legal.module.css # create if not present
+  tokens: ../../styles/tokens.css
+
+content:
+  title: "Terms of use"
+  subtitle: "Plain-English terms for AI‑Tutor."
+  last_updated: "September 2025"
+  toc:
+    - Using AI‑Tutor
+    - Your content & IP
+    - Payments & access (L2/L3/L4)
+    - Acceptable use
+    - Disclaimers
+    - Limits of liability
+    - Termination
+    - Contact
+
+  sections:
+    - id: using
+      h2: "Using AI‑Tutor"
+      body:
+        - "You must be 16+ and legally able to agree to these terms."
+        - "We may update features and terms; we’ll note the date at the top."
+
+    - id: content
+      h2: "Your content & IP"
+      body:
+        - "You own your inputs and outputs where law allows. You grant us a limited license to process your inputs to run the service."
+        - "Don’t enter sensitive personal or confidential data you’re not allowed to share."
+
+    - id: payments
+      h2: "Payments & access"
+      body:
+        - "L1 is free. Paid levels (L2/L3/L4) are one‑year access from purchase."
+        - "Payments are handled by Stripe; pricing is shown in your market at checkout."
+
+    - id: acceptable
+      h2: "Acceptable use"
+      bullets:
+        - "No unlawful, harmful, or abusive use."
+        - "No attempts to reverse engineer or overload the service."
+        - "No automated scraping."
+
+    - id: disclaimers
+      h2: "Disclaimers"
+      body:
+        - "Service is provided “as is.” We don’t guarantee outcomes or uninterrupted availability."
+
+    - id: limits
+      h2: "Limits of liability"
+      body:
+        - "To the extent permitted by law, we’re not liable for indirect or consequential losses."
+
+    - id: termination
+      h2: "Termination"
+      body:
+        - "We may suspend or end access for violations. You can stop using the service at any time."
+
+    - id: contact
+      h2: "Contact"
+      body:
+        - "Questions about these terms: support@ai‑tutor.example"
+
+aside:
+  cards:
+    - title: "Quick links"
+      links:
+        - { label: "Privacy policy", href: "/legal/privacy" }
+        - { label: "Pricing & access", href: "/pricing" }
+        - { label: "Support", href: "/account" }
+
+a11y:
+  headings: "H1 for page, H2 per section, dl/ol where meaningful"
+  focus: "All links/buttons keyboard reachable; visible focus ring"
+  landmarks: ["main", "aside[role=region][aria-label='Quick links']"]
+
+test_ids:
+  page_title: "legal-terms-title"
+  last_updated: "legal-terms-updated"
+  toc: "legal-terms-toc"
+  section_prefix: "legal-terms-sec-"
+  start_course_cta: "legal-terms-cta-start" # optional secondary CTA
+
+acceptance:
+  - "Matches frames at 360/768/1200; content flows without overflow."
+  - "Imports tokens.css; no inline styles or hex/rgba literals."
+  - "Reuses Card/Button/Header components."
+  - "Sticky aside on desktop only."
+  - "Axe a11y passes at all breakpoints."

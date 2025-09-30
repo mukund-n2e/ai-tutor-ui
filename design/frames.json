@@ -1,83 +1,16 @@
 {
-  "meta": {
-    "exportDate": "2025-09-26T02:13:58.654Z",
-    "platform": "figma-make",
-    "version": "4.1.0"
-  },
   "breakpoints": {
-    "desktop": [
-      1440,
-      900
-    ],
-    "tablet": [
-      768,
-      1024
-    ],
-    "mobile": [
-      390,
-      844
-    ]
+    "desktop": [1440, 900],
+    "mobile": [390, 844]
   },
   "frames": {
-    "landing": {
-      "title": "01_Landing",
-      "pageId": "landing",
-      "description": "Hero section with value prop and verb selection"
-    },
-    "onboarding-role": {
-      "title": "02_Onboarding_Role",
-      "pageId": "onboarding-role",
-      "description": "Role selection (Creator/Consultant)"
-    },
-    "onboarding-readiness": {
-      "title": "03_Onboarding_Readiness",
-      "pageId": "onboarding-readiness",
-      "description": "AI readiness assessment"
-    },
-    "quickwin-proposal": {
-      "title": "04_QuickWin_Proposal",
-      "pageId": "quickwin-proposal",
-      "description": "Generated proposal preview"
-    },
-    "session": {
-      "title": "05_Session",
-      "pageId": "session",
-      "description": "Active tutoring session with moves"
-    },
-    "validator": {
-      "title": "06_Validator",
-      "pageId": "validator",
-      "description": "Content validation and feedback"
-    },
-    "ship": {
-      "title": "07_Ship_Export",
-      "pageId": "ship",
-      "description": "Export and delivery options"
-    },
-    "course-wall": {
-      "title": "09_CourseWall_Personalised",
-      "pageId": "course-wall",
-      "description": "Personalized course recommendations"
-    },
-    "components": {
-      "title": "Design_System_Components",
-      "pageId": "components",
-      "description": "Complete component library showcase"
-    }
+    "landing":   { "desktop": "REPLACE_NODE_ID", "mobile": "REPLACE_NODE_ID" },
+    "role":      { "desktop": "REPLACE_NODE_ID", "mobile": "REPLACE_NODE_ID" },
+    "readiness": { "desktop": "REPLACE_NODE_ID", "mobile": "REPLACE_NODE_ID" },
+    "proposal":  { "desktop": "REPLACE_NODE_ID", "mobile": "REPLACE_NODE_ID" },
+    "session":   { "desktop": "REPLACE_NODE_ID", "mobile": "REPLACE_NODE_ID" },
+    "validator": { "desktop": "REPLACE_NODE_ID", "mobile": "REPLACE_NODE_ID" },
+    "export":    { "desktop": "REPLACE_NODE_ID", "mobile": "REPLACE_NODE_ID" }
   },
-  "components": [
-    "HeaderBar",
-    "HeroCard",
-    "IntakeChip",
-    "PromptField",
-    "MoveCard",
-    "TutorPanel",
-    "ValidatorCard",
-    "Banner",
-    "ExportPanel",
-    "Modal",
-    "Button variants"
-  ],
-  "exportType": "comprehensive",
-  "figmaImportInstructions": "Import tokens first, then use frame structure to recreate layouts"
+  "tokensMode": "Light"
 }

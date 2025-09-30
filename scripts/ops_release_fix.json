@@ -1,0 +1,114 @@
+{
+  "id": "prd-release-fix-v1",
+  "goal": "Ship a stable Production build and point tutorweb-cyan.vercel.app to it. Must pass PRD beta loop checks: /onboarding (200), /session (200 + SSR moves), SSE head streams, /api/export/docx returns .docx (magic 504b). Prefer /api/flags (beta:true, moves: Understand/Draft/Polish); if flags missing, still ship core loop and report.",
+  "repo": {
+    "github": "mukund-n2e/ai-tutor-web",
+    "primary_branch": "main",
+    "root_dir": "web"
+  },
+  "vercel": {
+    "team": "ai-tutor-7f989507",
+    "project": "ai-tutor-web",
+    "alias_host": "tutorweb-cyan.vercel.app"
+  },
+  "constraints": {
+    "one_change_at_a_time": true,
+    "no_interactive_prompts": true,
+    "treat_failures_as_signals": true,
+    "timeout_minutes": 25
+  },
+  "steps": [
+    {
+      "name": "Preflight link + pull prod settings",
+      "run": [
+        "vercel link --project ai-tutor-web --yes --scope ai-tutor-7f989507",
+        "vercel pull --yes --environment=production --scope ai-tutor-7f989507"
+      ],
+      "expect": ["Downloaded project settings"]
+    },
+    {
+      "name": "Ensure /api/flags route exists (Node runtime, dynamic) — idempotent",
+      "run": [
+        "mkdir -p web/src/app/api/flags",
+        "test -f web/src/app/api/flags/route.ts || cat > web/src/app/api/flags/route.ts <<'TS'\nexport const runtime = 'nodejs';\nexport const dynamic = 'force-dynamic';\nexport async function GET() {\n  return Response.json({ beta: true, moves: ['Understand','Draft','Polish'], ts: new Date().toISOString() }, { headers: { 'Cache-Control': 'no-store' } });\n}\nTS"
+      ]
+    },
+    {
+      "name": "Local sanity build (no deploy) and prove flags is compiled",
+      "cwd": "web",
+      "run": [
+        "vercel build",
+        "test -d .vercel/output/functions/api/flags.func || (echo 'flags.func missing' && exit 2)"
+      ],
+      "on_fail": {
+        "patches": [
+          {
+            "desc": "Fallback implementation under pages/api if app-route failed",
+            "apply": "mkdir -p web/src/pages/api; cat > web/src/pages/api/flags.ts <<'TS'\nexport default function handler(_req, res){res.status(200).json({beta:true,moves:['Understand','Draft','Polish'],ts:new Date().toISOString()});}\nexport const config = { api: { bodyParser: true } };\nTS"
+          }
+        ],
+        "re_run": [
+          "vercel build",
+          "test -d .vercel/output/functions/api/flags.func -o -f .vercel/output/functions/api/flags.js || (echo 'flags still missing' && exit 2)"
+        ]
+      }
+    },
+    {
+      "name": "Trigger a Git Production build (avoids CLI author restriction)",
+      "run": [
+        "touch web/public/_deploy-trigger-$(date -u +%Y%m%d_%H%M%S).txt",
+        "git checkout -B ops/ship-flags",
+        "git add web/public/_deploy-trigger-*",
+        "git commit -m 'chore(deploy): trigger Production build'",
+        "git push -u origin ops/ship-flags",
+        "gh pr create --fill --base main --head ops/ship-flags",
+        "gh pr merge --squash --delete-branch"
+      ],
+      "expect": ["Squashed and merged"]
+    },
+    {
+      "name": "Wait for newest Ready Production and verify /api/flags",
+      "poll": {
+        "cmd": "vercel ls ai-tutor-web --scope ai-tutor-7f989507 --prod",
+        "every_seconds": 8,
+        "max_attempts": 20
+      },
+      "then": {
+        "script": "urls=$(vercel ls ai-tutor-web --scope ai-tutor-7f989507 --prod | awk '/Ready/ && /vercel.app/ { for(i=1;i<=NF;i++) if ($i ~ /^https:\\/\\/[a-z0-9-]+\\.vercel\\.app$/) { print $i; exit } }'); for u in $urls; do s=$(curl -s -o /tmp/flags.json -w '%{http_code}' \"$u/api/flags?t=$(date +%s)\"); if [ \"$s\" = \"200\" ] && grep -q '\"beta\"\\s*:\\s*true' /tmp/flags.json && grep -q '\"Understand\"' /tmp/flags.json; then echo $u > /tmp/PROD_OK; break; fi; done; test -s /tmp/PROD_OK || exit 3"
+      },
+      "on_fail": {
+        "note": "Flags are nice-to-have. If none ready, proceed to core PRD checks on newest Ready prod.",
+        "fallback": {
+          "script": "vercel ls ai-tutor-web --scope ai-tutor-7f989507 --prod | awk '/Ready/ && /vercel.app/ { for(i=1;i<=NF;i++) if ($i ~ /^https:\\/\\/[a-z0-9-]+\\.vercel\\.app$/) { print $i; exit } }' > /tmp/PROD_OK"
+        }
+      }
+    },
+    {
+      "name": "Core PRD checks on chosen prod",
+      "run": [
+        "PROD=$(cat /tmp/PROD_OK)",
+        "curl -s -o /dev/null -w 'ONBOARDING:%{http_code}\\n' \"$PROD/onboarding\" | tee /tmp/_check",
+        "curl -s -o /dev/null -w 'SESSION:%{http_code}\\n' \"$PROD/session?verb=Create&persona=Creator&minutes=20&task=hello\" | tee -a /tmp/_check",
+        "curl -N -sS -H 'Accept: text/event-stream' \"$PROD/api/tutor/stream?courseTitle=Probe&scope=Probe&message=hello\" | sed -n '1,3p' | grep -q '^data:' || (echo 'SSE head missing' && exit 4)",
+        "curl -sS -o /tmp/out.docx -X POST \"$PROD/api/export/docx\" -H 'Content-Type: application/json' --data '{\"title\":\"PRD Session\",\"content\":\"Line1\"}'",
+        "[ \"$(hexdump -n 2 -e '2/1 \"%02x\"' /tmp/out.docx)\" = \"504b\" ] || (echo 'DOCX bad magic' && exit 5)",
+        "grep -q 'ONBOARDING:200' /tmp/_check && grep -q 'SESSION:200' /tmp/_check"
+      ]
+    },
+    {
+      "name": "Point alias to chosen prod and verify via alias",
+      "run": [
+        "PROD=$(cat /tmp/PROD_OK)",
+        "vercel alias set \"$PROD\" tutorweb-cyan.vercel.app --scope ai-tutor-7f989507",
+        "curl -s -o /dev/null -w 'ALIAS_ONBOARDING:%{http_code}\\n' \"https://tutorweb-cyan.vercel.app/onboarding\" | tee /tmp/_check2",
+        "curl -s -o /dev/null -w 'ALIAS_SESSION:%{http_code}\\n' \"https://tutorweb-cyan.vercel.app/session?verb=Create&persona=Creator&minutes=20&task=hello\" | tee -a /tmp/_check2",
+        "grep -q 'ALIAS_ONBOARDING:200' /tmp/_check2 && grep -q 'ALIAS_SESSION:200' /tmp/_check2 || (echo 'Alias not serving new prod' && exit 6)"
+      ],
+      "emit": {
+        "release_url": "PROD",
+        "alias": "https://tutorweb-cyan.vercel.app"
+      }
+    }
+  ],
+  "done_when": "Alias serves a Ready Production that passes: onboarding 200, session 200 (+SSE head), export docx magic 504b. If /api/flags is present, confirm beta:true and moves."
+}

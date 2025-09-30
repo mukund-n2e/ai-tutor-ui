@@ -1,0 +1,20 @@
+{
+  "routes": [
+    "/", "/onboarding", "/wall", "/lesson/L1-05", "/lesson/L1-05/outline", "/pricing", "/checkout/success", "/checkout/error", "/account", "/legal/privacy", "/legal/terms"
+  ],
+  "files": {
+    "landing": ["web/src/app/(marketing)/page.tsx", "web/src/styles/landing.module.css"],
+    "onboarding": ["web/src/app/onboarding/page.tsx", "web/src/styles/onboarding.module.css"],
+    "wall": ["web/src/app/wall/page.tsx", "web/src/styles/wall.module.css"],
+    "lesson": ["web/src/app/lesson/L1-05/page.tsx", "web/src/styles/lesson.module.css"],
+    "outline": ["web/src/app/lesson/L1-05/outline/page.tsx", "web/src/styles/outline.module.css"],
+    "pricing": ["web/src/app/pricing/page.tsx", "web/src/styles/pricing.module.css"],
+    "checkout": ["web/src/app/checkout/success/page.tsx", "web/src/app/checkout/error/page.tsx", "web/src/app/api/checkout/route.ts"],
+    "account": ["web/src/app/account/page.tsx"],
+    "legal": ["web/src/app/legal/privacy/page.tsx", "web/src/app/legal/terms/page.tsx"],
+    "system": ["web/src/app/not-found.tsx", "web/src/app/error.tsx"]
+  },
+  "tests": [
+    "tests/e2e/landing.spec.ts", "tests/e2e/onboarding.spec.ts", "tests/e2e/wall.spec.ts", "tests/e2e/lesson.spec.ts", "tests/e2e/outline.spec.ts", "tests/e2e/checkout.spec.ts", "tests/e2e/system.spec.ts"
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "name": "AI Tutor Asset Package",
+  "version": "1.0.0",
+  "description": "Complete asset package for AI Tutor landing page",
+  "assets": {
+    "logo": "/assets/ai-tutor-logo.svg",
+    "icons": [
+      "/assets/play-icon.svg",
+      "/assets/check-circle-icon.svg",
+      "/assets/clock-icon.svg"
+    ]
+  },
+  "instructions": {
+    "figma": "Import SVG assets directly into Figma. Logo should be 32px height in header.",
+    "css": "All assets use currentColor for theming. Design tokens available in DesignTokens.json",
+    "accessibility": "All icons have proper aria-labels and are keyboard navigable."
+  },
+  "designTokens": "/design/DesignTokens.json",
+  "breakpoints": {
+    "mobile": "360px",
+    "tablet": "768px",
+    "desktop": "1200px"
+  }
+}

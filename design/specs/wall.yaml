@@ -1,0 +1,30 @@
+screen: Course Wall
+route: /wall
+breakpoints: [360, 768, 1200]
+copy:
+  title: "Pick a quick win"
+  sub: "One skill. One small win. About 15 minutes."
+filters:
+  - search: input placeholder "Search skills…"
+  - level: chips [L1, L2, L3] (single select)
+  - focus: chips [Writing, Workflow, Ideas, Basics, Email] (multi, max 2; disable overflow)
+  - role: select [Office admin, Small service business, Teacher, Healthcare admin, Student, Other]
+  - duration: static chip "~15 min"
+logic:
+  - If query via=onboarding, render "Recommended for you" with up to 3 cards
+  - Buttons: Start → /lesson/{id}?via=wall; Preview → /lesson/{id}/outline?via=wall
+acceptance:
+  - No inline styles or literal hex/rgba in wall.module.css
+  - Chip groups use role="group" with aria-labelledby
+  - aria-pressed on selectable chips; aria-disabled on disabled focus chips
+  - Grid: 3/2/1 columns desktop/tablet/mobile
+test_ids:
+  wall-title: page title
+  wall-search: search input
+  wall-level-L1..L3: level chips
+  wall-focus-*: focus chips
+  wall-role: role select
+  wall-recommended: recommended section container (when via=onboarding)
+  wall-grid: course cards grid
+tokens:
+  - Import ../../styles/tokens.css

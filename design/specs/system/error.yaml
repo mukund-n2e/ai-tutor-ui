@@ -1,0 +1,10 @@
+screen: Checkout Error
+route: /checkout/error
+breakpoints: [360, 768, 1200]
+copy:
+  title: "Payment didn’t go through"
+  actions:
+    - retry: "/pricing?retry=1"
+    - support: "mailto:support@aitutor.example"
+acceptance:
+  - Clear next steps; never exposes error codes client-side

@@ -1,0 +1,10 @@
+screen: Checkout Success
+route: /checkout/success
+breakpoints: [360, 768, 1200]
+copy:
+  title: "Payment confirmed"
+  body: "You're all set."
+  cta: "Start Level {level}" -> /wall?via=success
+acceptance:
+  - Minimal layout; branded; keyboard focus sent to H1
+  - No marketing distractions

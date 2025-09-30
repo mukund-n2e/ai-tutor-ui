@@ -1,0 +1,8 @@
+screen: System Error
+route: /error
+breakpoints: [360, 768, 1200]
+copy:
+  title: "Something went wrong"
+  cta: "Try again"
+acceptance:
+  - No stack traces; log server-side only

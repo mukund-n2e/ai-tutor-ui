@@ -1,0 +1,8 @@
+screen: Not Found
+route: /not-found (framework)
+breakpoints: [360, 768, 1200]
+copy:
+  title: "We couldn't find that"
+  cta: "Back to home" -> /
+acceptance:
+  - Use Next.js not-found convention

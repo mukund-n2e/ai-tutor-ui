@@ -1,0 +1,45 @@
+screen: Lesson Runner
+route: /lesson/L1-05
+breakpoints: [360, 768, 1200]
+workflow:
+  steps: [Learn it, Apply it, Check‑it, Ship]
+  entry:
+    default: Learn it
+    when_via_onboarding: Apply it
+apply_step:
+  fields:
+    - rough_text: textarea 500 chars max + live counter (aria-live polite)
+    - tone: chips [Warm, Neutral, Direct] (single)
+    - length: chips [~75 words, ~120 words] (single)
+    - audience: chips [Manager, Client, Team] (single)
+  actions:
+    - back: to Learn
+    - generate: to Check‑it; produce draft
+check_step:
+  shows:
+    - draft_readonly
+    - validators_panel: items [Clarity amber, Time green, Numbers green, Safe amber]
+  quick_fixes:
+    - clarity_ok -> "Make it Neutral" sets green
+    - safe_ok -> "Remove risky info" sets green
+  actions:
+    - back: to Apply
+    - fix_all: all green -> Ship
+ship_step:
+  actions:
+    - copy_all
+    - download_md
+    - link: "Start another quick win" -> /onboarding?via=restart
+test_ids:
+  lsn-step-*: per step headings
+  lsn-cta-*: all step CTAs
+  lsn-rough: textarea
+  lsn-charcount: counter
+  lsn-validators: panel container
+  lsn-val-clarity/time/numbers/safe: validator dots
+acceptance:
+  - Stepper marks current with aria-current="step"
+  - Two-column layout on desktop (8/12 flow, 4/12 validators), stacked on mobile; sticky bottom actions at 390px
+  - No inline styles or hex/rgba; tokens only
+tokens:
+  - Import ../../../styles/tokens.css

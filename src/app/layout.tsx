@@ -1,6 +1,7 @@
 // web/src/app/layout.tsx
 import type { ReactNode } from "react";
-import "../styles/ai-tutor.css";
+import "../styles/tokens.css";
+import "./globals.css";
 import HeaderBar from "../components/HeaderBar";
 
 export const metadata = {
@@ -11,9 +12,9 @@ export const metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body className="ai-body">
+      <body>
         <HeaderBar />
-        <main className="container">{children}</main>
+        {children}
       </body>
     </html>
   );

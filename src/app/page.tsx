@@ -10,7 +10,7 @@ export default function Page() {
           Learn and apply AI to your job. No fluff.
         </h1>
         <p className="subhead">
-          Pick a job task. We'll guide three decisive moves, validate, and you're done.
+          Pick a job task. We&apos;ll guide three decisive moves, validate, and you&apos;re done.
         </p>
 
         <div className="cta-row">

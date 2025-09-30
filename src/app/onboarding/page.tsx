@@ -1,11 +1,13 @@
 'use client';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 const VERBS = ['Create','Automate','Analyze','Decide','Personalize','Connect'] as const;
 const PERSONAS = ['Creator','Consultant'] as const;
 const TIMES = [20,40,60] as const;
 
 export default function Onboarding() {
+  const router = useRouter();
   const [verb, setVerb] = useState<typeof VERBS[number]>('Create');
   const [persona, setPersona] = useState<typeof PERSONAS[number]>('Creator');
   const [minutes, setMinutes] = useState<typeof TIMES[number]>(20);
@@ -13,7 +15,7 @@ export default function Onboarding() {
 
   function start() {
     const url = `/session?verb=${encodeURIComponent(verb)}&persona=${encodeURIComponent(persona)}&minutes=${minutes}&task=${encodeURIComponent(task)}`;
-    window.location.href = url;
+    router.push(url);
   }
 
   return (

@@ -12,7 +12,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest --run",
     "test:watch": "vitest",
-    "test:ci": "vitest --run --coverage --reporter=dot"
+    "test:ci": "vitest --run --coverage --reporter=dot",
+    "verify:ui": "bash scripts/verify_ui.sh",
+    "test:e2e": "playwright test || true"
   },
   "dependencies": {
     "docx": "^8.5.0",

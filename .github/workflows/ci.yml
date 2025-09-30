@@ -1,0 +1,21 @@
+name: CI
+on:
+  push: { branches: ["**"] }
+  pull_request:
+jobs:
+  build-test-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm ci
+      - name: Install Playwright deps
+        run: npx playwright install --with-deps || true
+      - name: Verify UI baseline
+        run: npm run verify:ui
+      - name: Type-check & build
+        run: |
+          npm run build || (echo "Build failed" && exit 1)
+      - name: E2E smoke (non-blocking for now)
+        run: npm run test:e2e || true

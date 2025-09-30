@@ -1,0 +1,192 @@
+{
+  "version": "1.0",
+  "principles": [
+    "One outcome at a time",
+    "Freeze the design system; pass verifiers before merge",
+    "No inline styles in core components; tokens only",
+    "Ship when acceptance checks pass"
+  ],
+  "streams": [
+    {
+      "module": "Repo & CI",
+      "microsteps": [
+        {
+          "id": "R-01",
+          "title": "Push clean UI repo to GitHub and enable CI",
+          "depends_on": [],
+          "deliverable": "Repo on GitHub with Actions green",
+          "agent_skills": [
+            "git",
+            "GitHub Actions",
+            "Node.js",
+            "Next.js"
+          ],
+          "acceptance_checks": [
+            "git remote -v shows origin",
+            "CI workflow passed on main",
+            "npm run build succeeds",
+            "npm run verify:ui returns 0 or only expected inline-style warnings in legacy"
+          ]
+        },
+        {
+          "id": "R-02",
+          "title": "Seed .env on Vercel (without Stripe keys)",
+          "depends_on": [
+            "R-01"
+          ],
+          "deliverable": "Vercel project linked; build passes on preview",
+          "agent_skills": [
+            "Vercel CLI",
+            "Next.js"
+          ],
+          "acceptance_checks": [
+            "Vercel preview URL live and functional",
+            "Routes render: /, /onboarding, /wall, /lesson/L1-05/outline, /pricing, /account, /legal/*"
+          ]
+        }
+      ]
+    },
+    {
+      "module": "Checkout & Markets",
+      "microsteps": [
+        {
+          "id": "C-01",
+          "title": "Wire market chips (AU/IN/ROW) to price IDs (UI only)",
+          "depends_on": [
+            "R-02"
+          ],
+          "deliverable": "Pricing UI displays A$, \u20b9, or US$ correctly; summary updates",
+          "agent_skills": [
+            "TypeScript",
+            "Next.js",
+            "UX"
+          ],
+          "acceptance_checks": [
+            "Market chip changes all price labels",
+            "Order summary reflects plan + market",
+            "Unit tests cover mapping"
+          ]
+        },
+        {
+          "id": "C-02",
+          "title": "Stripe checkout (server route) with env guards",
+          "depends_on": [
+            "C-01"
+          ],
+          "deliverable": "/api/checkout uses market to select price ID; redirects to Stripe",
+          "agent_skills": [
+            "Next.js API routes",
+            "Stripe"
+          ],
+          "acceptance_checks": [
+            "Missing env \u2192 returns 400 with friendly message",
+            "Set env \u2192 Stripe session created (manual test)"
+          ]
+        }
+      ]
+    },
+    {
+      "module": "Auth & Account",
+      "microsteps": [
+        {
+          "id": "A-01",
+          "title": "Email-only magic link (stub provider interface)",
+          "depends_on": [
+            "R-02"
+          ],
+          "deliverable": "/account sends email link; stub logs to console in dev",
+          "agent_skills": [
+            "Auth",
+            "Email",
+            "Next.js"
+          ],
+          "acceptance_checks": [
+            "Email form validates",
+            "Dev logs contain magic link URL",
+            "Production uses provider (Resend/SES)"
+          ]
+        }
+      ]
+    },
+    {
+      "module": "Content & Lessons",
+      "microsteps": [
+        {
+          "id": "L-01",
+          "title": "Seed 12 micro-courses metadata (JSON) + wall filters wired",
+          "depends_on": [
+            "R-02"
+          ],
+          "deliverable": "courses.json + types; wall filters functional",
+          "agent_skills": [
+            "TypeScript",
+            "Content modeling"
+          ],
+          "acceptance_checks": [
+            "JSON validates against schema",
+            "Wall cards render from JSON only (no hardcode)"
+          ]
+        },
+        {
+          "id": "L-02",
+          "title": "Lesson runner template for L1-xx (reuse L1-05)",
+          "depends_on": [
+            "L-01"
+          ],
+          "deliverable": "Factory to create lesson routes from config",
+          "agent_skills": [
+            "Next.js",
+            "TypeScript"
+          ],
+          "acceptance_checks": [
+            "Add new lesson config \u2192 page builds without code edits"
+          ]
+        }
+      ]
+    },
+    {
+      "module": "Video",
+      "microsteps": [
+        {
+          "id": "V-01",
+          "title": "Abstract VideoProvider (Mux-compatible) + landing demo slot",
+          "depends_on": [
+            "R-02"
+          ],
+          "deliverable": "components/VideoProvider.tsx (HLS) + landing uses it",
+          "agent_skills": [
+            "Video/HLS",
+            "React",
+            "A11y"
+          ],
+          "acceptance_checks": [
+            "Demo video plays on mobile (muted autoplay fallback)",
+            "No CLS or layout shift",
+            "Provider swap documented"
+          ]
+        }
+      ]
+    },
+    {
+      "module": "Observability",
+      "microsteps": [
+        {
+          "id": "O-01",
+          "title": "Client error logging + route timing (web vitals)",
+          "depends_on": [
+            "R-02"
+          ],
+          "deliverable": "lib/log.ts + next/analytics integration",
+          "agent_skills": [
+            "Web Vitals",
+            "Logging"
+          ],
+          "acceptance_checks": [
+            "Network logs visible in dev",
+            "Error rate dashboard hooked to console/dev sink"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "version": "1.0",
+  "goal": "Take the clean UI repo to live readiness without Stripe keys; run strictly one step at a time with verification gates.",
+  "repoPath": "<local path to clean UI repo>",
+  "steps": [
+    {
+      "id": "S1",
+      "title": "Push repo to GitHub + enable CI",
+      "run": [
+        "git init || true",
+        "git remote remove origin || true",
+        "git remote add origin <GITHUB_SSH_OR_HTTPS_URL>",
+        "git add -A",
+        "git commit -m 'chore: bootstrap clean UI repo' || true",
+        "git push -u origin main --tags"
+      ],
+      "verify": [
+        "git remote -v | grep origin",
+        "node -v && npm -v",
+        "npm ci",
+        "npm run verify:ui || true",
+        "npm run build"
+      ],
+      "mustPass": [
+        "npm run build"
+      ],
+      "artifacts": [
+        ".github/workflows/ci.yml",
+        "scripts/verify_ui.sh"
+      ],
+      "onFailure": "Stop. Report console + CI output."
+    },
+    {
+      "id": "S2",
+      "title": "Create Vercel project + first deploy (no Stripe env yet)",
+      "run": [
+        "npx vercel link --yes --project ai-tutor-ui --scope <your-team>",
+        "npx vercel pull --yes --environment=preview",
+        "npx vercel build",
+        "npx vercel deploy --prebuilt --prod"
+      ],
+      "verify": [
+        "curl -sSf <DEPLOY_URL>/ | head -n 5",
+        "curl -sSf <DEPLOY_URL>/onboarding | head -n 5"
+      ],
+      "mustPass": [
+        "curl -sSf <DEPLOY_URL>/"
+      ],
+      "onFailure": "Stop. Capture Vercel logs; do not retry without fix."
+    },
+    {
+      "id": "S3",
+      "title": "Wire markets in pricing (UI only)",
+      "run": [
+        "npm run verify:ui || true",
+        "npm run build"
+      ],
+      "verify": [
+        "grep -R 'AU\\|IN\\|USD' src/app/pricing || true"
+      ],
+      "mustPass": [
+        "npm run build"
+      ],
+      "onFailure": "Stop and open a PR with failing diff."
+    },
+    {
+      "id": "S4",
+      "title": "Scaffold content seed (12 micro-courses)",
+      "run": [
+        "node -e \"console.log('seed placeholder: create data/courses.json')\""
+      ],
+      "verify": [
+        "test -f data/courses.json || true"
+      ],
+      "mustPass": [],
+      "onFailure": "Stop; request PM approval for schema."
+    },
+    {
+      "id": "S5",
+      "title": "Video provider abstraction + landing demo slot",
+      "run": [
+        "node -e \"console.log('create components/VideoProvider.tsx and wire to landing')\""
+      ],
+      "verify": [
+        "grep -R 'VideoProvider' src || true"
+      ],
+      "mustPass": [],
+      "onFailure": "Stop; request PM sign-off on player."
+    }
+  ],
+  "finish": "Report deploy URL + which acceptance checks are green. Do not proceed to Stripe until keys provided."
+}

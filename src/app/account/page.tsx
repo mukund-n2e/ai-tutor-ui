@@ -12,7 +12,7 @@ export default function AccountSignInPage() {
           <form className={styles.form} aria-label="Email sign-in">
             <label className={styles.label} htmlFor="email">Email</label>
             <input id="email" name="email" type="email" className={styles.input} placeholder="you@example.com" aria-describedby="email-hint" required />
-            <div id="email-hint" className={styles.hint}>We'll email you a magic link to sign in.</div>
+            <div id="email-hint" className={styles.hint}>We&apos;ll email you a magic link to sign in.</div>
             <button className="btn-primary" type="submit" disabled>Send magic link (stub)</button>
           </form>
         </div>

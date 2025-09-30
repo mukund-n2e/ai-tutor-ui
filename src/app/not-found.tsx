@@ -12,7 +12,7 @@ export default function NotFound() {
           <section className={styles.statusCard}>
             <div className={`${styles.statusIcon} ${styles.err}`}>404</div>
             <h1 className={styles.statusTitle}>Page not found</h1>
-            <p className={styles.statusBody}>That link doesn't exist. Want to head back?</p>
+            <p className={styles.statusBody}>That link doesn&apos;t exist. Want to head back?</p>
             <div className={styles.statusActions}>
               <Link href="/" className="text-[var(--brand-accent)] underline">Go home</Link>
             </div>

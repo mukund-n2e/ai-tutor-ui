@@ -14,7 +14,7 @@ export default function CheckoutErrorPage() {
         <div className={styles.container}>
           <section className={styles.statusCard}>
             <div className={`${styles.statusIcon} ${styles.err}`}>!</div>
-            <h1 className={styles.statusTitle}>Payment didn't go through</h1>
+            <h1 className={styles.statusTitle}>Payment didn&apos;t go through</h1>
             <p className={styles.statusBody}>No charge was made. You can try again, or contact support if this keeps happening.</p>
             <div className={styles.statusActions}>
               <Button variant="primary" onClick={() => router.push('/pricing')}>Try again</Button>

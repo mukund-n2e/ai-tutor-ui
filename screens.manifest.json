@@ -1,0 +1,23 @@
+{
+  "baseUrl": "http://localhost:4321",
+  "viewports": {
+    "desktop": {
+      "width": 1200,
+      "height": 900
+    },
+    "tablet": {
+      "width": 768,
+      "height": 1024
+    },
+    "mobile": {
+      "width": 360,
+      "height": 780
+    }
+  },
+  "screens": [
+    {
+      "key": "landing",
+      "path": "/"
+    }
+  ]
+}

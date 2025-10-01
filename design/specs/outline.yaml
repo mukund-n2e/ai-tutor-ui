@@ -1,0 +1,150 @@
+screen_id: outline.L1-05
+route: /lesson/L1-05/outline
+breakpoints:
+  - 360
+  - 768
+  - 1200
+
+imports:
+  - ../../components/Header
+  - ../../components/Button
+  - ../../components/Card
+  - ../../components/Chip
+  - ../../styles/tokens.css
+  - ../../styles/outline.module.css
+
+layout:
+  header:
+    component: Header
+    props: {}
+    tokens:
+      height: var(--header-height) # 64px
+  main:
+    max_width: 1200
+    padding_x: var(--spacing-lg)
+    padding_top: var(--section-gap)
+    grid:
+      desktop: ["2fr", "1fr"]   # outline content | quick facts (sticky)
+      tablet:  ["1fr"]          # stacked
+      mobile:  ["1fr"]          # stacked
+    sections:
+      - id: page-header
+        type: block
+        content:
+          title: "{course.title} — outline"
+          subtitle: "One skill. One small win. About 15 minutes."
+        testids:
+          title: ol-title
+      - id: quick-facts
+        type: card
+        sticky_desktop: true
+        card_title: "Quick facts"
+        rows:
+          - label: "Level"     value: "{course.level}"
+          - label: "Time"      value: "{course.duration}"
+          - label: "Outcome"   value: "{course.outcome_short}"
+          - label: "Artifact"  value: "{course.artifact}"
+        link:
+          text: "See sample output"
+          href: "#"
+        a11y:
+          card_role: "region"
+          label: "Quick facts about this course"
+        testids:
+          container: ol-facts
+      - id: what-youll-make
+        type: card
+        title: "What you'll make"
+        body: "You'll ship: {course.artifact} you can use today."
+        meta_chips: ["{course.level}", "{course.duration}", "{course.artifact}"]
+        testids:
+          container: ol-make
+      - id: how-it-works
+        type: card
+        title: "How it works"
+        ordered_steps:
+          - "Learn it | 3 bullets you'll skim."
+          - "Apply it | Paste your rough text + pick tone/length/audience."
+          - "Check‑it | Fix any amber checks in one tap."
+          - "Ship | Copy or download your finished piece."
+        semantics:
+          list: "ol"     # ordered list
+        testids:
+          container: ol-steps
+      - id: requirements
+        type: card
+        title: "What you'll need"
+        bullets:
+          - "Your email app"
+          - "One recent example"
+        testids:
+          container: ol-need
+      - id: audience
+        type: card
+        title: "Who it's for"
+        chips: ["Office admin","Small service business","Teacher","Healthcare admin","Student"]
+        testids:
+          container: ol-audience
+      - id: actions
+        type: actions
+        primary:
+          label: "Start course: {course.title}"
+          onClick: "router.push('/lesson/L1-05?via=outline')"
+          testid: ol-cta-start
+        secondary_group:
+          - kind: "secondary"
+            label: "Back to courses"
+            onClick: "router.push('/wall?via=outline')"
+            testid: ol-cta-back
+          - kind: "link"
+            label: "Share outline"
+            href: "#"
+            testid: ol-cta-share
+        layout:
+          mobile_full_width: true
+
+data:
+  course:
+    id: "L1-05"
+    title: "Rescue your inbox"
+    outcome_short: "Email system that works"
+    level: "L1"
+    duration: "~15 min"
+    artifact: "Email filter"
+
+a11y:
+  - all interactive elements reachable by keyboard with visible focus
+  - quick facts card role="region" + aria-label set
+  - list of steps uses <ol> with numbered indicators
+  - links and buttons have descriptive names (e.g., “Start course: Rescue your inbox”)
+
+tokens_and_styles:
+  use_tokens_css: true           # ../../styles/tokens.css
+  no_inline_styles: true
+  no_raw_hex_or_rgba: true
+  surfaces:
+    - var(--surface)
+    - var(--surface-muted)
+    - var(--surface-hover)
+  borders: var(--border)
+  brand_accent_tint: var(--brand-accent-tint)
+  spacing: var(--spacing-*)
+  radius:
+    - var(--radius-card)
+    - var(--radius-chip)
+    - var(--radius-button)
+
+telemetry:
+  on_primary_click: "outline_start_clicked"
+  on_back_to_courses: "outline_back_clicked"
+
+test_ids:
+  - ol-title
+  - ol-facts
+  - ol-make
+  - ol-steps
+  - ol-need
+  - ol-audience
+  - ol-cta-start
+  - ol-cta-back
+  - ol-cta-share

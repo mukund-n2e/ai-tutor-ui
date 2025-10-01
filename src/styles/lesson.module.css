@@ -1,0 +1,453 @@
+/* Lesson Runner Styles - Using Design Tokens */
+
+.page {
+  min-height: 100vh;
+  background: var(--background);
+  font-family: var(--font-sans);
+}
+
+.main {
+  padding-top: var(--header-height);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+}
+
+/* Stepper */
+.stepper {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-2xl);
+  padding: var(--spacing-2xl) 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--spacing-2xl);
+}
+
+.stepItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.stepActive {
+  opacity: 1;
+}
+
+.stepNumber {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--surface-muted);
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--text-mid);
+}
+
+.stepActive .stepNumber {
+  background: var(--brand-accent);
+  border-color: var(--brand-accent);
+  color: var(--brand-accent-foreground);
+}
+
+.stepLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-mid);
+  text-align: center;
+}
+
+.stepActive .stepLabel {
+  color: var(--text-high);
+  font-weight: 600;
+}
+
+/* Grid Layout */
+.grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--spacing-2xl);
+  align-items: start;
+}
+
+.flowColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.validatorsColumn {
+  position: sticky;
+  top: calc(var(--header-height) + var(--spacing-2xl));
+}
+
+/* Step Card */
+.stepCard {
+  width: 100%;
+  margin-bottom: var(--spacing-2xl);
+}
+
+.stepTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-high);
+  margin: 0 0 var(--spacing-lg) 0;
+}
+
+.stepBody {
+  color: var(--text-mid);
+  line-height: 1.6;
+  margin: 0 0 var(--spacing-xl) 0;
+  max-width: 65ch;
+}
+
+.stepActions {
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+  margin-top: var(--spacing-xl);
+}
+
+/* Form Fields */
+.fieldGroup {
+  margin-bottom: var(--spacing-xl);
+}
+
+.fieldLabel {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-high);
+  margin-bottom: var(--spacing-md);
+}
+
+.textarea {
+  width: 100%;
+  padding: var(--spacing-md);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-button);
+  background: var(--surface);
+  color: var(--text-high);
+  font-size: 1rem;
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  resize: vertical;
+  transition: border-color 0.2s ease;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--brand-accent);
+  box-shadow: 0 0 0 1px var(--brand-accent);
+}
+
+.textarea::placeholder {
+  color: var(--text-low);
+}
+
+.charCount {
+  font-size: 0.875rem;
+  color: var(--text-low);
+  text-align: right;
+  margin-top: var(--spacing-xs);
+}
+
+.draftArea {
+  padding: var(--spacing-lg);
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-button);
+  color: var(--text-high);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  min-height: 120px;
+}
+
+/* Constraints */
+.constraintsGrid {
+  display: grid;
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
+}
+
+.constraintGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.constraintLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-high);
+}
+
+.chipGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  min-height: var(--min-touch-target);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-chip);
+  color: var(--text-high);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.chip:hover {
+  background: var(--surface-hover);
+  border-color: var(--brand-accent);
+}
+
+.chip:focus {
+  outline: 2px solid var(--brand-accent);
+  outline-offset: 2px;
+}
+
+.chipSelected {
+  background: var(--brand-accent);
+  color: var(--brand-accent-foreground);
+  border-color: var(--brand-accent);
+}
+
+.chipSelected:hover {
+  background: var(--brand-accent-hover);
+  border-color: var(--brand-accent-hover);
+}
+
+/* Inline Fixes */
+.inlineFixes {
+  margin-bottom: var(--spacing-xl);
+}
+
+.fixesLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-high);
+  margin: 0 0 var(--spacing-md) 0;
+}
+
+.fixChip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  min-height: var(--min-touch-target);
+  background: var(--feedback-warning);
+  border: 1px solid var(--feedback-warning);
+  border-radius: var(--radius-chip);
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.fixChip:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.fixChip:focus {
+  outline: 2px solid var(--brand-accent);
+  outline-offset: 2px;
+}
+
+/* Success Banner */
+.successBanner {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  background: rgba(5, 150, 105, 0.1);
+  border: 1px solid var(--feedback-success);
+  border-radius: var(--radius-button);
+  color: var(--feedback-success);
+  font-weight: 600;
+  margin-bottom: var(--spacing-xl);
+}
+
+.successIcon {
+  width: 20px;
+  height: 20px;
+  background: var(--feedback-success);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.linkAction {
+  margin-top: var(--spacing-lg);
+  text-align: center;
+}
+
+.textLink {
+  background: none;
+  border: none;
+  color: var(--brand-accent);
+  font-size: 0.875rem;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.textLink:hover {
+  color: var(--brand-accent-hover);
+}
+
+.textLink:focus {
+  outline: 2px solid var(--brand-accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Validators Panel */
+.validatorsPanel {
+  width: 100%;
+}
+
+.validatorsTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-high);
+  margin: 0 0 var(--spacing-lg) 0;
+}
+
+.validatorsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.validatorItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+}
+
+.validatorDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.dotGreen {
+  background: var(--feedback-success);
+}
+
+.dotAmber {
+  background: var(--feedback-warning);
+}
+
+.validatorContent {
+  flex: 1;
+}
+
+.validatorLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-high);
+  margin-bottom: var(--spacing-xs);
+}
+
+.validatorHint {
+  font-size: 0.75rem;
+  color: var(--text-low);
+  line-height: 1.4;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xl);
+  }
+  
+  .validatorsColumn {
+    position: static;
+    order: -1;
+  }
+  
+  .stepper {
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg) 0;
+  }
+  
+  .stepActions {
+    justify-content: center;
+  }
+  
+  .constraintsGrid {
+    gap: var(--spacing-lg);
+  }
+}
+
+@media (max-width: 390px) {
+  .container {
+    padding: 0 var(--spacing-md);
+  }
+  
+  .stepper {
+    gap: var(--spacing-md);
+    padding: var(--spacing-md) 0;
+  }
+  
+  .stepNumber {
+    width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
+  }
+  
+  .stepLabel {
+    font-size: 0.75rem;
+  }
+  
+  .stepActions {
+    position: sticky;
+    bottom: var(--spacing-lg);
+    background: var(--background);
+    padding: var(--spacing-lg) 0;
+    margin: var(--spacing-xl) calc(-1 * var(--card-padding)) 0;
+    border-top: 1px solid var(--border);
+    flex-direction: column;
+  }
+  
+  .stepActions button {
+    width: 100%;
+  }
+  
+  .chipGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: var(--spacing-sm);
+  }
+  
+  .chip {
+    justify-content: center;
+  }
+}

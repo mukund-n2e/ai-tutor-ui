@@ -1,0 +1,14 @@
+id: account_verify
+route: /account/verify
+query: [token, next]
+breakpoints: [360, 768, 1200]
+imports:
+  css: [/src/styles/tokens.css]
+  components: [Header, Card]
+states:
+  - verifying: "Signing you in…"
+  - success: "Signed in" → redirect to {{next|/wall}}
+  - error: "Link invalid or expired" + CTA "Resend" → /account
+tests:
+  - "Invalid token shows error state"
+  - "Success sets session cookie and redirects"

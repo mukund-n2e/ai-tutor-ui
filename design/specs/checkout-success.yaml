@@ -1,0 +1,23 @@
+id: checkout-success
+route: /pricing/success
+breakpoints: [360, 768, 1200]
+layout:
+  header: Reuse <Header/>
+  main: centered container (max 720), success banner, actions
+copy:
+  title: "You're in."
+  subtitle: "Payment received. {level} is now active for 1 year."
+  note: "Refreshers are free for life."
+actions:
+  primary:
+    label: "Start learning"
+    route: "/wall?via=success"
+  secondary:
+    label: "Go to my account"
+    route: "/account"
+a11y:
+  - Success banner has role="status" and visible icon
+testIds: [co-success-title, co-success-primary, co-success-secondary]
+acceptance:
+  - Tokenized CSS, no inline styles/hex
+  - Keyboard and screen-reader friendly

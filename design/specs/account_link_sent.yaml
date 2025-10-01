@@ -1,0 +1,22 @@
+id: account_link_sent
+route: /account/link-sent
+breakpoints: [360, 768, 1200]
+imports:
+  css: [/src/styles/tokens.css]
+  components: [Header, Card, Button]
+content:
+  title: "Check your email"
+  subtitle: "We sent a sign‑in link to {{email}}."
+  bullets:
+    - "Use the link on this device"
+    - "Link expires in 15 minutes"
+  actions:
+    primary:
+      label: "Open mail app"
+      route: "mailto:"
+    secondary:
+      label: "Resend"
+      action: "send_magic_link(email)"
+tests:
+  - "Email param is visible"
+  - "Resend calls API"

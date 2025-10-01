@@ -1,0 +1,27 @@
+id: account_signin
+route: /account
+breakpoints: [360, 768, 1200]
+imports:
+  css: [/src/styles/tokens.css, /src/styles/account.module.css]
+  components: [Header, Button, Card]
+content:
+  title: "Sign in"
+  subtitle: "No password. We’ll email you a magic link."
+  form:
+    emailField:
+      id: "acct-email"
+      placeholder: "you@example.com"
+      type: email
+    cta:
+      label: "Send magic link"
+      action: "send_magic_link(email)"
+  note: "By signing in you agree to our Terms and Privacy."
+interactions:
+  send_magic_link:
+    successRoute: "/account/link-sent?email={{email}}"
+    errorToast: "Couldn’t send the link. Try again."
+a11y:
+  - email input has label and aria‑invalid on bad format
+tests:
+  - "Valid email required"
+  - "Success goes to /account/link-sent"

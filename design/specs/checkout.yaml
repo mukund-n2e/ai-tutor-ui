@@ -1,0 +1,130 @@
+id: pricing-checkout
+route: /pricing
+breakpoints: [360, 768, 1200]
+
+layout:
+  header: Reuse <Header/>
+  container: maxWidth 1200, gutters var(--spacing-lg)
+  desktop:
+    grid:
+      - col(8/12): plans + market selector + FAQ/assurances
+      - col(4/12): sticky order summary (offset = header-height + 24px)
+  tablet/mobile:
+    stack: [plans, summary, assurances]
+    stickyActions: bottom bar with primary CTA
+
+copy:
+  title: "Pick your level"
+  subtitle: "No monthly. One price per level. 1 year access. Refreshers free for life."
+  privacyNote: "Incognito by default. Nothing saved unless you say so."
+  assuranceBullets:
+    - "One price. No upsells."
+    - "Secure checkout by Stripe"
+    - "Instant access after payment"
+
+marketSelector:
+  label: "Market"
+  options:
+    - id: AU
+      label: "Australia"
+      currency: AUD
+      enableINRFlag: false
+    - id: IN
+      label: "India"
+      currency: INR
+      enableINRFlagEnv: STRIPE_ENABLE_INR  # if false, show note "(charged in AUD today)"
+  a11y:
+    role: group
+    ariaLabel: "Choose your market"
+    pressedState: true
+
+plans:
+  levels:
+    - id: L1
+      label: "L1 — Learn AI, build confidence"
+      price:
+        AU: "Free"
+        IN: "Free"
+      bullets:
+        - "All L1 micro-courses"
+        - "Hands-on, 15‑minute wins"
+        - "No card required"
+      cta:
+        label: "Start free"
+        route: "/onboarding?via=pricing"
+    - id: L2
+      label: "L2 — Broad use‑case skills"
+      price:
+        AU: "A$39/year"
+        IN: "₹199/year"
+      bullets:
+        - "All L2 micro‑courses (1 year)"
+        - "Templates + artifacts"
+        - "Email refreshers forever"
+      sku:
+        AU: "price_L2_AUD_39"
+        IN: "price_L2_INR_199"
+      ctaLabel: "Continue to checkout"
+    - id: L3
+      label: "L3 — Role‑specific skills"
+      price:
+        AU: "A$89/year"
+        IN: "₹399/year"
+      bullets:
+        - "All L3 micro‑courses (1 year)"
+        - "Role‑tuned workflows"
+        - "Email refreshers forever"
+      sku:
+        AU: "price_L3_AUD_89"
+        IN: "price_L3_INR_399"
+      ctaLabel: "Continue to checkout"
+    - id: L4
+      label: "L4 — Applying AI expertise"
+      price:
+        AU: "A$199/year"
+        IN: "₹899/year"
+      status: "coming-soon"
+
+orderSummary:
+  fields:
+    - label: "Level"
+    - label: "Market"
+    - label: "Price"
+  notes:
+    - if IN selected and !STRIPE_ENABLE_INR: "Charged in AUD today; your bank may convert."
+  legalLinks: ["Terms", "Privacy"]
+
+interactions:
+  selectMarket:
+    sets: activeMarket (AU|IN)
+  selectPlan:
+    sets: selectedPlan (L1|L2|L3) # L4 disabled
+  checkout:
+    when: selectedPlan in [L2, L3]
+    action: POST /api/checkout with {planId, market}
+    server:
+      if env(STRIPE_ENABLE_INR)==true && market==IN: use INR price id
+      else: use AUD price id
+    redirect: stripe.url
+  l1Start:
+    route: "/onboarding?via=pricing"
+  successRedirect: "/pricing/success?level={id}"
+  cancelRedirect: "/pricing/error?reason=cancel"
+
+a11y:
+  - All chip groups use role="group" + aria-pressed on items (match onboarding pattern)
+  - Primary CTA announces price, e.g., "Continue to checkout — A$39"
+  - Sticky bottom bar on mobile is keyboard reachable
+
+testIds:
+  - pr-title, pr-subtitle
+  - pr-market-AU, pr-market-IN
+  - pr-plan-L1, pr-plan-L2, pr-plan-L3
+  - pr-cta-l1, pr-cta-checkout
+  - pr-summary-level, pr-summary-market, pr-summary-price
+
+acceptance:
+  - No inline styles or hex/rgba literals; use tokens.css only
+  - Reuse Header, Button, Card components
+  - Desktop sticky summary; mobile sticky CTA
+  - Works at 360/768/1200 with the same visual rhythm as shipped pages

@@ -1,0 +1,170 @@
+screen_id: lesson
+route: "/lesson/L1-05"
+breakpoints: [360, 768, 1200]
+
+header:
+  sticky: true
+  height: 64
+  left: { logo_svg: "/assets/ai-tutor-logo.svg", label: "AI Tutor", alt: "AI Tutor (home)", href: "/" }
+  right:
+    - { type: "link", label: "Sign in", href: "/account" }
+    - { type: "button", kind: "ghost", label: "Start free", action: "go_onboarding" }
+
+entry:
+  default_step: "learn"             # first load defaults to Learn it
+  when_param:
+    via: "onboarding"
+    start_step: "apply"             # if arriving from onboarding, land on Apply it
+
+layout:
+  grid_columns: 12
+  max_width: 1200
+  gutters: 16
+  desktop_columns: { left: 8, right: 4 }   # left = flow; right = validators
+  mobile_stack: true
+  sticky_actions_mobile: true              # keep primary action visible at 360
+
+stepper:
+  steps:
+    - { id: "learn",   label: "Learn it" }
+    - { id: "apply",   label: "Apply it" }
+    - { id: "check",   label: "Check‑it" }
+    - { id: "ship",    label: "Ship" }
+  rules:
+    free_nav: false
+    aria_current_on_active: true           # add aria-current="step" on active step
+
+steps:
+  learn:
+    kind: "card"
+    title: "Learn it"
+    body: |
+      We’ll turn your rough note into a clear update. Three moves:
+      set a few choices, generate a draft, fix anything amber.
+    actions:
+      secondary: { label: "Try sample", action: "try_sample" }
+      primary:   { label: "Next",       action: "go_apply" }
+
+  apply:
+    kind: "card"
+    title: "Apply it"
+    fields:
+      - id: "rough_text"
+        type: "textarea"
+        label: "Your rough text"
+        placeholder: "Paste or write your rough note here…"
+        rows: 8
+        char_count:
+          max: 500
+          aria_live: "polite"
+    constraints:
+      - id: "tone"
+        label: "Tone"
+        type: "chips"
+        multi: false
+        options: ["Warm","Neutral","Direct"]
+        default: "Neutral"
+      - id: "length"
+        label: "Length"
+        type: "chips"
+        multi: false
+        options: ["~75 words","~120 words"]
+        default: "~120 words"
+      - id: "audience"
+        label: "Audience"
+        type: "chips"
+        multi: false
+        options: ["Manager","Client","Team"]
+        default: "Manager"
+    actions:
+      secondary: { label: "Back",           action: "go_learn" }
+      primary:   { label: "Generate draft", action: "generate_draft" }
+
+  check:
+    kind: "card"
+    title: "Check‑it"
+    draft:
+      read_only: true
+      label: "Draft"
+    inline_fixes:
+      chips_from_validators: true           # render one-tap fixes under the draft
+    actions:
+      secondary: { label: "Back",    action: "go_apply" }
+      primary:   { label: "Fix all", action: "fix_all" }
+
+  ship:
+    kind: "card"
+    title: "Ship"
+    banner:
+      tone: "success"
+      text: "Looks good."
+    actions:
+      primary:   { label: "Copy all",     action: "copy_all" }
+      secondary: { label: "Download .md", action: "download_md" }
+      link:      { label: "Start another quick win", href: "/onboarding?via=restart" }
+
+validators_panel:
+  title: "Checks"
+  show_from_step: "apply"
+  items:
+    - id: "clarity_ok"
+      label: "Clarity"
+      hint: "Plain and specific."
+      initial_state: "amber"
+    - id: "time_ok"
+      label: "Time"
+      hint: "Fits your chosen length."
+      initial_state: "green"
+    - id: "numbers_ok"
+      label: "Numbers"
+      hint: "No invented numbers."
+      initial_state: "green"
+    - id: "safe_ok"
+      label: "Safe"
+      hint: "No risky info."
+      initial_state: "amber"
+  tokens:
+    green:  "var(--feedback-success)"
+    amber:  "var(--feedback-warning)"
+    dot_size_px: 12
+
+tokens:
+  css_file: "/web/src/styles/tokens.css"    # header 64px; brand/text/surface/border/feedback colors
+  use_feedback_tokens: true                 # use --feedback-success / --feedback-warning for state colors
+
+interactions:
+  try_sample:
+    fills:
+      rough_text: "Quick update on project timeline..."
+      tone: "Warm"
+      length: "~75 words"
+      audience: "Manager"
+    next: "apply"
+  go_learn:     { next: "learn" }
+  go_apply:     { next: "apply" }
+  generate_draft:
+    next: "check"
+    effects:
+      validators:
+        clarity_ok: "amber"
+        time_ok:    "green"
+        numbers_ok: "green"
+        safe_ok:    "amber"
+  fix_all:
+    next: "ship"
+    effects:
+      validators:
+        clarity_ok: "green"
+        safe_ok:    "green"
+  copy_all:     { emit: "artifact_copied" }
+  download_md:  { emit: "artifact_downloaded", format: "markdown" }
+
+acceptance:
+  - "Header sticky 64px; logo + wordmark link home"
+  - "Auto Layout throughout; tokens only (no hex)"
+  - "Stepper reflects progress; active step has aria-current='step'"
+  - "Apply: textarea with live char count; constraints as chips with 44px min targets"
+  - "Validators panel shows from Apply onward; uses feedback tokens for amber/green"
+  - "Mobile: primary action remains visible (sticky within card)"
+  - "Desktop: two-column (8/12 flow, 4/12 validators); tablet/mobile stack"
+  - "Ship: Copy all + Download .md present; success banner visible"

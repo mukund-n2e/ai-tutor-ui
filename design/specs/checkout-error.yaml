@@ -1,0 +1,23 @@
+id: checkout-error
+route: /pricing/error
+breakpoints: [360, 768, 1200]
+layout:
+  header: Reuse <Header/>
+  main: centered container (max 720), error banner, actions
+copy:
+  title: "Payment not completed"
+  subtitle: "Looks like the checkout was canceled or failed."
+  hint: "No charges were made."
+actions:
+  primary:
+    label: "Try again"
+    route: "/pricing?via=retry"
+  secondary:
+    label: "Back to courses"
+    route: "/wall"
+a11y:
+  - Error banner has role="alert" and visible icon
+testIds: [co-error-title, co-error-primary, co-error-secondary]
+acceptance:
+  - Tokenized CSS, no inline styles/hex
+  - Axe a11y passes at all breakpoints

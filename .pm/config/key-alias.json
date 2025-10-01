@@ -1,0 +1,17 @@
+{
+  "pricing": "pricing-checkout",
+  "pricing-checkout": "pricing",
+  "checkout": "pricing",
+  "checkout-success": "success",
+  "success": "checkout-success",
+  "checkout-error": "error",
+  "error": "checkout-error",
+  "legal-privacy": "privacy",
+  "privacy": "legal-privacy",
+  "legal-terms": "terms",
+  "terms": "legal-terms",
+  "not-found-404": "not-found",
+  "not-found": "not-found-404",
+  "outline": "lesson-outline",
+  "lesson-outline": "outline"
+}
